@@ -11,9 +11,9 @@ app.use(express.json());
 const { sequelize } = require('./models/data_model');
 
 app.use('/api', routes);
-//const { authenticateToken } = 
 
-//app.use('/', routeHandler); 
+const { authenticateToken} = require('./middleware/validateToken');
+app.use(authenticateToken);
 
 try {
   sequelize.sync().then(() => {

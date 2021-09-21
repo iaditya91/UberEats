@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const { createCustomer } = require('../controllers/customer');
+const { createCustomer,loginCustomer } = require('../controllers/customer');
 const { customerRegistrationValidationRules, 
     validate, } = require('../controllers/validationRules');
 
@@ -15,5 +15,8 @@ router.post('/register/customers',
  customerRegistrationValidationRules,
  validate,
  createCustomer);
+
+router.get('/login/customers',
+    loginCustomer);
 
 module.exports = router;
