@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const { customer } = require('../models/data_model');
 
 const {
-    genereateAccessToken,
+    genereateAccessToken, generateAccessToken,
 } = require('../middleware/validateToken');
 
 const createCustomer = async (req, res)=>{
@@ -24,11 +24,37 @@ const createCustomer = async (req, res)=>{
         token,
     });}
     catch(error){
-        res.status(404).json({ error: error.message});
+        res.status(404).json({ error: error.message });
     }
 };
 
+const loginCustomer = async (req, res)=>{
+    try {
+        const {emailId, passwd} = req.body;
+        if(!emailId || !passwd){
+            return res.send(404).json({ error: 'Please enter all fields!'});
+        }
+        const existingCustomer = await customer.findOne({
+            where: {emailId}
+        });
+        if(!existingCustomer){
+            return res.status(404).json({ error:'Email not found please register!'});
+        }
+        bcrypt.compare(passwd, existingCustomer.passwd, (err)=>{
+            if(err){
+                return res.status(401).json({ error: 'Invalid Password'});
+            }
+            const new_token = generateAccessToken(existingCustomer.custId, 'customer');
+            return res.status(200).json({token: new_token, message:'login successful!'});
+        });
+    }
+    catch(error){
+        res.status(500).json({error: error.message});
+    }
+    return null;
+};
 
 module.exports = {
-    createCustomer,
+    createCustomer, 
+    loginCustomer
 };
