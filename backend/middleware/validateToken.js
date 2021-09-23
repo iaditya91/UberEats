@@ -6,8 +6,7 @@ dotenv.config({ path: path.join(__dirname, '../.env')});
 
 const { customer } = require('../models/data_model');
 
-const generateAccessToken = (id, role) =>
-    jwt.sign({id, role}, process.env.TOKEN_SECRET, {expiresIn: '1h'});
+const generateAccessToken = (id, role) => { jwt.sign({id, role}, process.env.TOKEN_SECRET, {expiresIn: '1h'});}
 
 
 const authenticateToken = (req, res, next)=>{

@@ -7,6 +7,7 @@ const {
 
 const createCustomer = async (req, res)=>{
     try{
+        console.log('inside create customer');
         const checkUser = await customer.findOne({
          where: { emailId: req.body.emailId}
     });

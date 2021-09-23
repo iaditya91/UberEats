@@ -12,8 +12,8 @@ router.get('/', (req, res)=>{
 });
 
 router.post('/register/customers',
- customerRegistrationValidationRules,
- validate,
+ //customerRegistrationValidationRules,
+ //validate,
  createCustomer);
 
 router.get('/login/customers',
