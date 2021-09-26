@@ -4,9 +4,12 @@
   "description": "Backend for Uber Eats",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon index.js",
+    "client": "npm run start --prefix ../frontend",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\""
   },
-  "author": "Harshil Darji",
+  "author": "Aditya Inampudi",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
