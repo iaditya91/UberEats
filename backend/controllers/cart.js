@@ -3,9 +3,9 @@ const { cart, restaurant, dish } = require('../models/data-model');
 const insertIntoCart = async (req, res) => {
   try {
     const { custId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
+    // if (String(req.headers.id) !== String(custId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
     const { restId, dishId } = req.body;
     // If restaurant ID or Dish ID is not sent
     if (!restId) {

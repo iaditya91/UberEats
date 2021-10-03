@@ -55,7 +55,7 @@ const loginRestaurant = async (req, res) => {
 const getRestaurant = async (req, res) => {
   try {
     const { restId } = req.params;
-    if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
+    //if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
     const rest = await restaurant.findOne({
       where: { restId },
     });
@@ -136,6 +136,7 @@ const createDish = async (req, res) => {
 
 const getRestaurantDishes = async (req, res) => {
   const { restId } = req.params;
+  console.log(restId);
   // const { limit, offset } = getPaiganation(req.query.page, req.query.limit);
   try {
     const dishes = await dish.findAll({ where: { restId } });

@@ -15,6 +15,8 @@ const authenticateToken = (req, res, next) => {
     || req.url === '/api/register/restaurants'
     || req.url === '/api/login/customers'
     || req.url === '/api/login/restaurants'
+    || req.url.startsWith('/api/restaurants/')
+    || req.url.startsWith('/api/customers/')
   ) {
     next();
     return;
