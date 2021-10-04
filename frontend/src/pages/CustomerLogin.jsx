@@ -31,7 +31,7 @@ function LoginCustomer() {
       console.log(response);
       dispatch(loginCustomerSuccess(response));
       sessionStorage.setItem('token', response.data.token);
-      hist.push('/restaurants');
+      hist.push('/restaurantMain');
     } catch (error) {
       console.log(error);
       dispatch(loginCustomerFailure(error));

@@ -3,49 +3,61 @@ import React,{useState} from 'react';
 import { useHistory } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import {Link} from 'react-router-dom';
-import jwt_decode from 'jwt-decode';
-// import {
-//   HeaderNavigation,
-//   ALIGN,
-//   StyledNavigationList,
-//   StyledNavigationItem,
-// } from 'baseui/header-navigation';
-// import { StyledLink } from 'baseui/link';
-import { Button } from 'baseui/button';
+// import { Button } from 'baseui/button';
 import { List, Drawer,ListItem } from '@mui/material';
-
-// import { FormControl } from 'baseui/form-control';
-// import { useStyletron } from 'baseui';
-// import { useHistory } from 'react-router';
 import {
   Navbar, Nav, FormControl, Form, ListGroupItem,
 } from 'react-bootstrap';
 import uberlogo from '../images/ubereats.svg';
 import { logoutCustomer } from '../reducers/actions/customer';
 import { logoutRestaurant } from '../reducers/actions/restaurant';
-// import uberlogo from '../images/uberlogo.jpeg';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import axiosInstance from '../config/axiosConfig';
+import ListItemButton from '@mui/material/ListItemButton';
+import { useEffect } from 'react';
 
 export default function AppBarPrimary() {
-  // const [css] = useStyletron();
-  const history = useHistory();
   const [toggleDraw, setToggleDraw] = useState(false)
   const dispatch = useDispatch()
   const hist = useHistory()
   const Custtoken= useSelector(state=>state.customer);
   const Resttoken= useSelector(state=>state.restaurant);
+  const [cart, setCart] = useState({});
+  
+  const [openCart, setOpenCart] = React.useState(false);
+  const handleClickOpenCart = () => { setOpenCart(true);};
+  const handleCloseCart = () => { setOpenCart(false); };
+  const cartState = useSelector(state=>state.cart)
+  
+  useEffect(() => {
+      
+      setCart(cartState.dishes)
+  }, [cartState])
+
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-
     setToggleDraw(open);
   };
 
   const logoutHandler = ()=>{
     dispatch(logoutRestaurant());
-    dispatch(logoutCustomer());    
+    dispatch(logoutCustomer());
+    sessionStorage.clear('token');
     hist.push('/')
+  }
+
+  const checkOutHandler =()=>{
+    console.log('Checkout handler')
+    hist.push('/orderCheckout')
   }
 
   return (
@@ -60,9 +72,10 @@ export default function AppBarPrimary() {
       onClose={toggleDrawer('toggleDraw', false)}
     >
       <List>
-        <ListItem><Link to="/register/restaurant">Register Restaurant</Link></ListItem>
-        <ListItem><Link to="/restaurants/update">Update Restaurant</Link></ListItem>
-        <ListItem><Link to="/login/restaurant">Login Restaurant</Link></ListItem>
+     
+        <ListItemButton><Link to="/login/restaurant">Restaurant Login</Link></ListItemButton>
+        <ListItemButton><Link to="/register/restaurant">Register Your Restaurant</Link></ListItemButton>
+        
         
       </List>
     </Drawer>
@@ -80,9 +93,45 @@ export default function AppBarPrimary() {
             <Button variant="outline-success">Search</Button>
           </Form>
 
-          <Nav.Link href="/login/customer">Login</Nav.Link>
-          <Nav.Link href="/register/customer">Register</Nav.Link>
-          <Nav.Link href="#action2">Cart</Nav.Link>
+          {(!Custtoken.token || !Resttoken.token)&&<Nav.Link href="/login/customer">Login</Nav.Link>}
+          {(!Custtoken.token || !Resttoken.token)&&<Nav.Link href="/register/customer">Register</Nav.Link>}
+          {(Custtoken.token)&&<Nav.Link onClick={handleClickOpenCart}>Cart</Nav.Link>}
+          <Dialog
+              open={openCart}
+              onClose={handleCloseCart}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+            <DialogTitle id="alert-dialog-title">{"Cart"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+              {/* <Box    component="form" 
+                      sx={{'& .MuiTextField-root': { m: 1, width: '25ch' },}}
+                      noValidate
+                      autoComplete="off"> */}
+              <Box    sx={{'& .MuiTextField-root': { m: 1, width: '25ch' },}}>
+                          <form  >
+                          <div>
+                          {cart.length > 0  && cart.map((item) => {
+                            return (
+                               <div>
+                                <Typography component="div" variant="h6">
+                                   {item.name}
+                                </Typography>
+                                <Typography component="div" variant="subtitle1">
+                                  Price: {item.dishPrice} $
+                             </Typography>
+                               </div>
+                            )
+                          })}
+                          {/* <Typography component="div" variant="h5">Total: {totalSum}$</Typography> */}
+                          </div>
+                          <Button variant="contained" onClick={checkOutHandler}>Go To Checkout</Button>
+                          </form>
+              </Box>
+              </DialogContentText>
+          </DialogContent>
+          </Dialog>
           {(Custtoken.token || Resttoken.token)&&<Nav.Link onClick={logoutHandler}>Logout</Nav.Link>}
         </Nav>
         

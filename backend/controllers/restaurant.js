@@ -71,7 +71,8 @@ const getRestaurant = async (req, res) => {
 const updateRestaurant = async (req, res) => {
   try {
     const { restId } = req.params;
-    if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
+    console.log(restId+' matches with '+ req.headers.id)
+    // if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
     const [updated] = await restaurant.update(req.body, {
       where: { restId },
     });
@@ -117,7 +118,7 @@ const getRestaurants = async (req, res) => {
 const createDish = async (req, res) => {
   try {
     const { restId } = req.params;
-    if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
+    // if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
     const existingDish = await dish.findOne({
       where: { restId, name: req.body.name },
     });
@@ -163,7 +164,7 @@ const getRestaurantDish = async (req, res) => {
 const updateRestaurantDish = async (req, res) => {
   try {
     const { restId, dishId } = req.params;
-    if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
+    // if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
     const [updated] = await dish.update(req.body, {
       where: { restId, dishId },
     });

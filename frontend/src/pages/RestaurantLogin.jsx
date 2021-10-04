@@ -5,12 +5,8 @@ import { useHistory } from 'react-router';
 import { FormControl } from 'baseui/form-control';
 import { Input } from 'baseui/input';
 import { Button } from 'baseui/button';
-import uberlogoRes from '../images/uberLogoRes.png';
 import AppBar from '../components/AppBar';
 import translogo from '../images/logotransparent.jpg'
-import RestaurantMain from './RestaurantMain';
-import { AppNavBar, setItemActive } from 'baseui/app-nav-bar';
-import { ChevronDown, Delete, Overflow, Upload } from 'baseui/icon';
 
 import axiosInstance from '../config/axiosConfig';
 import {
@@ -34,7 +30,7 @@ function LoginRestaurant() {
       console.log(response);
       dispatch(loginRestaurantSuccess(response));
       sessionStorage.setItem('token', response.data.token);
-      hist.push('/restaurantMain');
+      hist.push('/restaurantAdmin');
     } catch (error) {
       console.log(error);
       dispatch(loginRestaurantFailure(error));

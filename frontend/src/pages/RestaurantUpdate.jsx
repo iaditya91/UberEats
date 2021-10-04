@@ -81,7 +81,7 @@ function RestaurantUpdate() {
         headers: { Authorization: token },
       });
       console.log(response);
-      hist.push('/restaurantMain');
+      hist.push('/restaurantAdmin');
     } catch (error) {
       console.log(error);
     }

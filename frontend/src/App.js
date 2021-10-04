@@ -11,6 +11,8 @@ import MediaUploader from './components/MediaUploader';
 import RestaurantUpdate from './pages/RestaurantUpdate';
 import Restaurants from './pages/Restaurants';
 import RestaurantMain from './pages/RestaurantMain';
+import RestaurantAdmin from './pages/RestaurantAdmin';
+import OrderCheckout from './pages/OrderCheckout';
 
 function App() {
   return (
@@ -24,8 +26,10 @@ function App() {
           <Route path="/register/restaurant" component={RestaurantSignup} />
           <Route path="/restaurants/update" component={RestaurantUpdate} />
           <Route path="/restaurantMain" component={RestaurantMain} />
+          <Route path="/restaurantAdmin" component={RestaurantAdmin} />
           <Route path="/restaurants" component={Restaurants} />          
           <Route path="/customers" component={RestaurantSignup} />
+          <Route path="/ordercheckout" component={OrderCheckout} />
           <Route path="/media" component={MediaUploader} />
         </Switch>
       </Router>

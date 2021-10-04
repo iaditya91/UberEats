@@ -114,9 +114,9 @@ const resetCartWithDifferentRestaurant = async (req, res) => {
 const viewCart = async (req, res) => {
   try {
     const { custId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
+    // if (String(req.headers.id) !== String(custId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
     const cartItems = await cart.findAll({
       include: [{ model: dish }],
       where: { custId },
