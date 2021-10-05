@@ -7,42 +7,11 @@ const {
 } = require('../models/data-model');
 
 const initOrder = async (req, res) => {
-  const t = await sequelize.transaction();
   try {
     const { custId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
-    const cartItems = await cart.findAll(
-      {
-        attributes: ['dishId', 'restId'],
-        where: { custId },
-      },
-      { transaction: t },
-    );
-    if (cartItems.length === 0) {
-      return res.status(404).json({ error: 'No items in cart!' });
-    }
+    const {orderType, price, taxPrice, totalPrice, orderAddress, cartItems} = req.body;
     const { restId } = cartItems[0];
-    const dishIdAndQty = {};
-    cartItems.forEach((cartItem) => {
-      dishIdAndQty[cartItem.dishId] = dishIdAndQty[cartItem.dishId]
-        ? dishIdAndQty[cartItem.dishId] + 1
-        : 1;
-    });
-    const dishDetails = await dish.findAll(
-      {
-        attributes: ['dishId', 'dishPrice'],
-        where: { dishId: Object.keys(dishIdAndQty) },
-      },
-      { transaction: t },
-    );
-    let price = 0;
-    dishDetails.forEach((dishD) => {
-      price += dishD.dishPrice * dishIdAndQty[dishD.dishId];
-    });
-    const taxPrice = Math.round(0.08 * price * 100) / 100;
-    const totalPrice = Math.round((price + taxPrice) * 100) / 100;
+    const orderPlacedTime = Date.now();
     const orderEntry = await order.create(
       {
         price,
@@ -50,27 +19,40 @@ const initOrder = async (req, res) => {
         totalPrice,
         custId,
         restId,
-        orderStatus: 'Initialized',
+        orderType,
+        orderAddress,
+        orderPlacedTime,
+        orderStatus: 'Placed',
       },
-      { transaction: t },
     );
-    t.commit();
-    return res
-      .status(200)
-      .json({ orderEntry, message: 'Order initialized!' });
+    const latestOrder = await order.findOne({
+      where: { custId },
+      order: [['createdAt', 'DESC']],
+    });
+    console.log(cartItems)
+    cartItems.forEach(async (cartItem) => {
+      await orderDishes.create(
+        {
+          orderId: orderEntry.orderId,
+          dishId: cartItem.dishId,  
+        },
+      );
+    });
+    return res.status(200).json({ orderEntry, message: 'Order Placed Successfully!' });
   } catch (error) {
-    await t.rollback();
     return res.status(500).json({ error: error.message });
   }
 };
 
+// For updating the status of the order 
+// place order = above + this (so if status = 'Placed' in above below api is not needed)
 const createOrder = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const { custId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
+    // if (String(req.headers.id) !== String(custId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
     const { orderType, orderAddress } = req.body;
     const orderPlacedTime = Date.now();
     if (!orderType) {

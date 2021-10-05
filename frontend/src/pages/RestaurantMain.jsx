@@ -16,9 +16,8 @@ import {createCart, addDishToCart} from '../reducers/actions/cartActions'
 import jwt_decode from 'jwt-decode';
 
 
+
 const token = sessionStorage.getItem('token');
-const decoded = jwt_decode(token);
-const custId = decoded.id;
 const restId =  1 //sessionStorage.getItem('restId')
 
 const useStyles = makeStyles(theme=>({
@@ -37,6 +36,12 @@ export default function RestaurantMain(){
     const [dishes,setDishes] = useState({})
     const [restaurant, setRestaurant] = useState({})
     const cartState = useSelector(state=> state.cart)
+    
+    var custId = 1;
+    if(token){
+        const decoded = jwt_decode(token);
+        var custId = decoded.id;
+    }
     
     // localStorage.setItem('dishes',dishes)
 

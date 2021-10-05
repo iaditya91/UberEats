@@ -107,9 +107,9 @@ const updateCustomer = async (req, res) => {
 const addCustomerAddress = async (req, res) => {
   try {
     const { custId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
+    // if (String(req.headers.id) !== String(custId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
     const { address } = req.body;
     if (!address) {
       return res.status(400).json({ error: 'Please enter address!' });
@@ -155,9 +155,9 @@ const deleteCustomer = async (req, res) => {
 const getCustomerAddresses = async (req, res) => {
   try {
     const { custId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
+    // if (String(req.headers.id) !== String(custId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
     const existingAddresses = await customerAddress.findAll({});
     if (!existingAddresses) {
       return res.status(409).json({ error: 'No addresses found!' });
