@@ -52,6 +52,8 @@ const loginRestaurant = async (req, res) => {
   return null;
 };
 
+
+
 const getRestaurant = async (req, res) => {
   try {
     const { restId } = req.params;
@@ -67,6 +69,15 @@ const getRestaurant = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+const imageUpload = async (req, res)=>{
+  try{
+    console.log('img upload')
+  }
+  catch(error){
+    console.log(error)
+  }
+}
 
 const updateRestaurant = async (req, res) => {
   try {
@@ -201,6 +212,7 @@ module.exports = {
   deleteRestaurant,
   getRestaurants,
   createDish,
+  imageUpload,
   getRestaurantDishes,
   getRestaurantDish,
   updateRestaurantDish,

@@ -45,15 +45,9 @@ export default function ViewOrders() {
             
             orders.map(async (order)=>{
               let restDetails = await axiosInstance.get(`/restaurants/${order.restId}`);
-              // console.log(restDetails)
-              // console.log(restDetails.data.rest.name)
-              // console.log(order.restId)
               restNames[order.restId] = restDetails.data.rest.name
             })
             setRestaurantNames(restNames)
-            // console.log('in view orders')
-            // console.log(orders)
-            // console.log(restaurantNames)
         } catch (error) {
         console.log(error);}
     },[]);

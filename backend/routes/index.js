@@ -15,6 +15,8 @@ const {
   orderValidationRules,
   customerAddressValidationRules,
 } = require('../controllers/valdiationRules');
+const multer  = require('multer')
+const upload = multer({dest: 'uploads/'})
 
 const router = Router();
 
@@ -41,12 +43,12 @@ router.post(
 );
 
 router.get('/customers/:custId', customerController.getCustomer);
+router.get('/customers/favourites/:custId', customerController.getCustomerFavourites);
 router.put('/customers/:custId', customerController.updateCustomer);
 router.delete(
   '/customers/:custId',
   customerController.deleteCustomer,
 );
-
 // Restaurant routes
 router.get('/restaurants', restaurantController.getRestaurants);
 router.get(
@@ -61,6 +63,12 @@ router.delete(
   '/restaurants/:restId',
   restaurantController.deleteRestaurant,
 );
+router.get('/customers/city/:city', customerController.getAllCustomerRestaurants);
+
+// router.post('/restaurants/:restId/imageUpload', upload.single('image'), (req, res)=>{
+//   res.send('img upload working!')
+// });
+
 // Restaurant Dishes routes
 router.post(
   '/restaurants/:restId/dishes',

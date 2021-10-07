@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { customer, customerAddress } = require('../models/data-model');
+const { customer, customerAddress, custFavs, restaurant } = require('../models/data-model');
 const {
   generateAccessToken,
 } = require('../middleware/validateToken');
@@ -168,6 +168,51 @@ const getCustomerAddresses = async (req, res) => {
   }
 };
 
+const getCustomerFavourites = async (req, res) => {
+  try {
+    const { custId } = req.params;
+    // if (String(req.headers.id) !== String(custId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
+    const favRests = await custFavs.findAll({
+      where: { custId },
+    }); 
+    console.log(favRests)
+    return res.status(200).json({ favRests });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// const getCustomerAddresses = async (req, res) => {
+//   try {
+//     const { custId } = req.params;
+//     if (String(req.headers.id) !== String(custId)) {
+//       return res.status(401).json({ error: 'Unauthorized request!' });
+//     }
+//     const existingAddresses = await customerAddress.findAll({});
+//     if (!existingAddresses) {
+//       return res.status(409).json({ error: 'No addresses found!' });
+//     }
+//     return res.status(200).json({ existingAddresses });
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+// };
+const getAllCustomerRestaurants = async (req, res) => {
+  try {
+    // eslint-disable-next-line camelcase
+    const { city } = req.params;
+    console.log(city);
+    const restaurants = await restaurant.findAll({ where: { city } });
+    // console.log(dishes);
+    if (!restaurants) return res.status(404).json({ error: 'Restaurant not found!' });
+    return res.status(200).json({ restaurants });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createCustomer,
   loginCustomer,
@@ -175,5 +220,7 @@ module.exports = {
   updateCustomer,
   addCustomerAddress,
   getCustomerAddresses,
+  getCustomerFavourites,
   deleteCustomer,
+  getAllCustomerRestaurants,
 };

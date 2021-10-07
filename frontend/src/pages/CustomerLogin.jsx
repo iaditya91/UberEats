@@ -31,7 +31,7 @@ function LoginCustomer() {
       console.log(response);
       dispatch(loginCustomerSuccess(response));
       sessionStorage.setItem('token', response.data.token);
-      hist.push('/restaurantMain');
+      hist.push('/customer/dashboard');
     } catch (error) {
       console.log(error);
       dispatch(loginCustomerFailure(error));
@@ -44,9 +44,6 @@ function LoginCustomer() {
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <img src={uberlogo} width="300px" />
       </div>
-      {/* <div style={{ justifyContent: 'center', width: '100%' }}>
-				<p>Welcome Back</p>
-			</div> */}
       <div
         style={{
           display: 'flex',

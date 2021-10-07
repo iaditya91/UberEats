@@ -5,6 +5,7 @@ import restaurantReducer from './restaurant';
 import customerSignupReducer from './signupReducer';
 import restaurantSignupReducer from './ResSignupReducer';
 import cartReducer from './cartReducer';
+import favReducer from './favReducer';
 import orderReducer from './orderReducer';
 
 const rootReducer = combineReducers({
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   signupActions: customerSignupReducer,
   cart: cartReducer,
   order: orderReducer,
+  favourite: favReducer,
 });
 
 export default rootReducer;

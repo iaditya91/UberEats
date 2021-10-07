@@ -14,6 +14,9 @@ import RestaurantMain from './pages/RestaurantMain';
 import RestaurantAdmin from './pages/RestaurantAdmin';
 import OrderCheckout from './pages/OrderCheckout';
 import ViewOrders from './pages/ViewOrders';
+import CustomerFavourtes from './pages/CustomerFavourtes';
+import CustomerDashboard from './pages/CustomerDashboard';
+import fileupload from './pages/fileupload';
 
 function App() {
   return (
@@ -33,6 +36,9 @@ function App() {
           <Route path="/ordercheckout" component={OrderCheckout} />
           <Route path="/media" component={MediaUploader} />
           <Route path="/viewOrders" component={ViewOrders} />
+          <Route path="/customerFavorites" component={CustomerFavourtes} />
+          <Route path="/customer/dashboard" component={CustomerDashboard} />
+          <Route path="/upload" component={fileupload} />
         </Switch>
       </Router>
     </React.Suspense>
