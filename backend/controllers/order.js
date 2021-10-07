@@ -150,9 +150,9 @@ const getRestaurantOrders = async (req, res) => {
 const getCustomerOrders = async (req, res) => {
   try {
     const { custId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
+    // if (String(req.headers.id) !== String(custId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
     const customerOrders = await order.findAll({
       where: { custId },
       include: [{ model: orderDishes, include: [{ model: dish }] }],

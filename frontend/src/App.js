@@ -13,6 +13,7 @@ import Restaurants from './pages/Restaurants';
 import RestaurantMain from './pages/RestaurantMain';
 import RestaurantAdmin from './pages/RestaurantAdmin';
 import OrderCheckout from './pages/OrderCheckout';
+import ViewOrders from './pages/ViewOrders';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/customers" component={RestaurantSignup} />
           <Route path="/ordercheckout" component={OrderCheckout} />
           <Route path="/media" component={MediaUploader} />
+          <Route path="/viewOrders" component={ViewOrders} />
         </Switch>
       </Router>
     </React.Suspense>
