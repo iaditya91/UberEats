@@ -44,8 +44,6 @@ export default function OrderCheckout(){
     const [successmessage, setSuccessMessage] = useState("")
     const [popUpMessageOpen, setPopUpMessageOpen] = useState(false)
     const custId = 1 //cartState.custId
-    // console.log("orderState")
-    // console.log(orderState[orderState.length - 1])
 
     useEffect(async ()=> {
         try {
@@ -80,11 +78,11 @@ export default function OrderCheckout(){
             cartItems: cartState.dishes
         }
         try {
-            // const response = await axiosInstance.post(`/customers/${custId}/orders/init`, orderObj);
-            // console.log(response)
+            const response = await axiosInstance.post(`/customers/${custId}/orders/init`, orderObj);
+            console.log(response)
             // setSuccessMessage(response.data.message)
-            setSuccessMessage("this is message")
-            setPopUpMessageOpen(true)
+            // setSuccessMessage("this is message")
+            // setPopUpMessageOpen(true)
         } catch (error) {
             console.log(error);}
     }
@@ -176,13 +174,13 @@ export default function OrderCheckout(){
                      </Typography>
              </div>
 
-             {successmessage&&<Snackbar
+             {/* {successmessage&&<Snackbar
                 anchorOrigin={ "bottom", "center" }
                 open={popUpMessageOpen}
                 onClose={setPopUpMessageOpen(false)}
                 message={successmessage}
                 // key={vertical + horizontal}
-                />}
+                />} */}
             
         </div>
     );
