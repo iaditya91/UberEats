@@ -12,6 +12,18 @@ import uberlogo from '../images/ubereats.svg';
 import uberlogoRes from '../images/uberLogoRes.png';
 import AppBar from '../components/AppBar';
 import { useHistory } from 'react-router';
+import S3FileUpload from 'react-s3';
+ 
+//Optional Import
+import { uploadFile } from 'react-s3';
+ 
+const config = {
+    bucketName: 'iaubereatsimages',
+    dirName: 'photos', /* optional */
+    region: 'us-east-1',
+    accessKeyId: 'AKIAVJYQSTCNRORFZMUT',
+    secretAccessKey: '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',
+}
 
 function RestaurantUpdate() {
   const [email_id, setEmail] = useState('');
