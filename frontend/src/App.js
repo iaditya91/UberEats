@@ -17,6 +17,7 @@ import ViewOrders from './pages/ViewOrders';
 import CustomerFavourtes from './pages/CustomerFavourtes';
 import CustomerDashboard from './pages/CustomerDashboard';
 import fileupload from './pages/fileupload';
+import CustomerUpdate from './pages/CustomerUpdate';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/register/customer" component={CustomerSignup} />
           <Route path="/register/restaurant" component={RestaurantSignup} />
           <Route path="/restaurants/update" component={RestaurantUpdate} />
+          <Route path="/customer/update" component={CustomerUpdate} />
           <Route path="/restaurantMain" component={RestaurantMain} />
           <Route path="/restaurantAdmin" component={RestaurantAdmin} />
           <Route path="/restaurants" component={Restaurants} />          

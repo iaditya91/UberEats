@@ -21,6 +21,7 @@ import Typography from '@mui/material/Typography';
 import axiosInstance from '../config/axiosConfig';
 import ListItemButton from '@mui/material/ListItemButton';
 import { useEffect } from 'react';
+import {CustomerUpdate} from '../pages/CustomerUpdate';
 
 export default function AppBarPrimary() {
   const [toggleDraw, setToggleDraw] = useState(false)
@@ -96,6 +97,7 @@ export default function AppBarPrimary() {
           {(!Custtoken.token || !Resttoken.token)&&<Nav.Link href="/login/customer">Login</Nav.Link>}
           {(!Custtoken.token || !Resttoken.token)&&<Nav.Link href="/register/customer">Register</Nav.Link>}
           {(!Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/customerFavorites')}>Favourites</Nav.Link>}
+          {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/customer/update')}>Update Profile</Nav.Link>}
           {(Custtoken.token)&&<Nav.Link onClick={handleClickOpenCart}>Cart</Nav.Link>}
           <Dialog
               open={openCart}
