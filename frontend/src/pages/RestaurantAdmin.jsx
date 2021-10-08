@@ -19,6 +19,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import jwt_decode from 'jwt-decode';
+import { uploadFile } from 'react-s3';
+import {awsConf} from '../config/awsConfig';
 
 const useStyles = makeStyles(theme=>({
     root: {
@@ -57,7 +59,7 @@ const dishCards = (dishes)=>{
              <CardMedia
                  component="img"
                  sx={{ width: 151 }}
-                 image="/static/images/cards/live-from-space.jpg"
+                 image={dishes[i].dishImg}
                  alt="Dish Image"
              />
          </Card>
@@ -187,7 +189,7 @@ export default function RestaurantAdmin(){
 
             <div>
             <Typography variant="subtitle1" color="text.secondary" component="div">
-            <img style={{width:"100%" ,height:300}} src={RestaurantHome} alt="This is image of restaurant"/>
+            <img style={{width:"100%" ,height:300}} src={restaurant.profileImg} alt="This is image of restaurant"/>
                 <div style={{position:"absolute",right:"16px" ,top:"70px"}}>
                    <button onClick={updateRestaurantHandler}>Update Restaurant</button>
                    <button onClick={handleClickOpenUpdateMenu}>Update Menu</button>
@@ -214,14 +216,12 @@ export default function RestaurantAdmin(){
                                               onChange={handleUpdateMenuChange}
                                             />
                                             <TextField
-                                              required
                                               name="description"
                                               id="outlined-disabled"
                                               label="Description"
                                               onChange={handleUpdateMenuChange}
                                             />
                                             <TextField
-                                              required
                                               name="dishPrice"
                                               id="outlined-required"
                                               label="Price"
@@ -270,18 +270,26 @@ export default function RestaurantAdmin(){
                                               onChange={handleAddMenuChange}
                                             />
                                             <TextField
-                                              required
                                               name="description"
                                               id="outlined-disabled"
                                               label="Description"
                                               onChange={handleAddMenuChange}
                                             />
                                             <TextField
-                                              required
                                               name="dishPrice"
                                               id="outlined-required"
                                               label="Price"
                                               onChange={handleAddMenuChange}
+                                            />
+                                            <input
+                                                type="file"
+                                                name=""
+                                                onChange={(e) => {
+                                                  uploadFile(e.target.files[0], awsConf).then((data)=>{
+                                                    setAddDish({...addDish, dishImg: data.location})}).catch(error=>{console.log(error)})
+                                                  }}
+                                                placeholder="Restaurant Image"
+                                                autoFocus
                                             />
                                             <TextField
                                                 select

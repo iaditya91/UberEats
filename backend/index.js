@@ -21,7 +21,7 @@ app.use('/api', routes);
 // Start the connection
 try {
   // conn.sync({ alter: true })
-  sequelize.sync().then(() => {
+  sequelize.sync({ alter: true }).then(() => {
     const PORT = 4000;
     app
       .listen(PORT, () => {

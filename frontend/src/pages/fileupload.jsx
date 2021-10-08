@@ -1,32 +1,24 @@
 /* eslint-disable */
 import React, { useState } from 'react';
 import AppBar from '../components/AppBar';
-import S3FileUpload from 'react-s3';
- 
-//Optional Import
-// import reactS3, { uploadFile } from 'react-s3';
- 
-const config = {
-    bucketName: 'iaubereatsimages',
-    dirName: 'photos', /* optional */
-    region: 'us-east-1',
-    accessKeyId: 'AKIAVJYQSTCNRORFZMUT',
-    secretAccessKey: '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',
-}
+import { uploadFile } from 'react-s3';
+import {awsConf} from '../config/awsConfig';
 
 export default function fileupload() {
     const doupload = (events)=>{
         console.log(events.target.files[0])
-        S3FileUpload.uploadFile(events.target.files[0], config).then((data)=>{
-            console.log(data)
+        uploadFile(events.target.files[0], awsConf).then((data)=>{
+            console.log(data.location)
         })
         .catch(error=>{
             console.log(error)
         })
     }
+    console.log(process.env.REACT_APP_ACCESSKEYID)
     return (
       <div>
         <AppBar/>
+        
         <input type="file" onChange={doupload}/>
       </div>
     );

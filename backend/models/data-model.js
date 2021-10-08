@@ -200,6 +200,9 @@ const dish = sequelize.define('dish', {
   description: {
     type: Sequelize.STRING,
   },
+  dishImg: {
+    type: Sequelize.STRING,
+  },
   dishType: {
     type: Sequelize.STRING,
   },

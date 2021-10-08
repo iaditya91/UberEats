@@ -12,18 +12,9 @@ import uberlogo from '../images/ubereats.svg';
 import uberlogoRes from '../images/uberLogoRes.png';
 import AppBar from '../components/AppBar';
 import { useHistory } from 'react-router';
-import S3FileUpload from 'react-s3';
  
-//Optional Import
 import { uploadFile } from 'react-s3';
- 
-const config = {
-    bucketName: 'iaubereatsimages',
-    dirName: 'photos', /* optional */
-    region: 'us-east-1',
-    accessKeyId: 'AKIAVJYQSTCNRORFZMUT',
-    secretAccessKey: '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',
-}
+import {awsConf} from '../config/awsConfig';
 
 function RestaurantUpdate() {
   const [email_id, setEmail] = useState('');
@@ -37,6 +28,7 @@ function RestaurantUpdate() {
   const [start_time, setStarttime] = useState('');
   const [end_time, setEndtime] = useState('');
   const [delivery_type, setDeliverytype] = useState('');
+  const [image, setImage] = useState('');
   const hist = useHistory();
   
 
@@ -83,6 +75,7 @@ function RestaurantUpdate() {
       description,
       start_time,
       end_time,
+      profileImg: image,
       deliveryType: delivery_type,
     };
     const token = sessionStorage.getItem('token');
@@ -184,6 +177,35 @@ function RestaurantUpdate() {
                     type="text"
                     onChange={(e) => setState(e.target.value)}
                     placeholder="State"
+                    autoFocus
+                  />
+                </FormControl>
+                <FormControl>
+                  <Input
+                    value={address}
+                    type="text"
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Address"
+                    autoFocus
+                  />
+                </FormControl>
+                <FormControl>
+                  <Input
+                    value={description}
+                    type="text"
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Description"
+                    autoFocus
+                  />
+                </FormControl>
+                <FormControl>
+                  <Input
+                    type="file"
+                    onChange={(e) => {
+                      uploadFile(e.target.files[0], awsConf).then((data)=>{
+                        setImage(data.location)}).catch(error=>{console.log(error)})
+                      }}
+                    placeholder="Restaurant Image"
                     autoFocus
                   />
                 </FormControl>
