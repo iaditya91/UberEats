@@ -51,31 +51,36 @@ export default function CustomerFavourtes() {
       <Typography  component="div" variant="h5">Recently Added</Typography>
       </div>
 
-      <div style={{ marginLeft: "10px", display:"grid", gridGap:"10px",gridTemplateRows:"repeat(2,170px)",gridTemplateColumns:"repeat(auto-fill, 450px)"}}>
+      <div>
+            <Grid container spacing={4} direction="row">
             {favRest.length>0 && favRest.map((rest) => {
                     return (
-                            <Card onClick={()=>{hist.push(`/restaurantMain/${rest.restId}`)}}>
-                            <Box style={{ display: 'flex' ,flexDirection:'columns', width:"100%", height:"100%"}}>
+                          <Grid item key={rest.restaurant.restId} xs={4} >
+                            <Card onClick={()=>{hist.push(`/restaurantMain/${rest.restId}`)}} sx={{ display: 'flex' }}>
+                            <Box sx={{ display: 'flex' }}>
 
-                            <CardContent style={{display: 'grid' ,gridTemplateRows:'repeat(2,30px)'}} >
-                                <Typography style={{justifyContent:'center'}} component="div" variant="h5">
+                            <CardContent sx={{ flex: '1 0 auto' }}>
+                                <Typography component="div" variant="h5">
                                    {rest.restaurant.name}
                                 </Typography>
-                                <Typography style={{justifyContent:'center'}} variant="subtitle1" color="text.secondary" component="div">
+                                <Typography variant="subtitle1" color="text.secondary" component="div">
                                    {rest.restaurant.description}
                                 </Typography></CardContent>
-                            
-                                <CardMedia style={{marginLeft:"auto"}}
+                            <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
+          
+                            </Box>
+                            </Box>
+                            <CardMedia
                                 component="img"
                                 sx={{ width: 151 }}
                                 image={rest.restaurant.profileImg}
                                 alt="Dish Image"
                             />
-                            </Box>
-                            
-                        </Card>) 
+                        </Card>
+                        </Grid>) 
 
             })}
+            </Grid>
         </div>
     </div>
   );

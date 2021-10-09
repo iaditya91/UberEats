@@ -37,6 +37,7 @@ export default function OrderCheckout(){
     const hist = useHistory()
     const cartState = useSelector(state=>state.cart)
     const orderState = useSelector(state=>state.order)
+    const detState = useSelector(state=>state.details)
     const dispatch = useDispatch()
     const classes = useStyles()
     const [address, setAddress] = useState()
@@ -45,6 +46,7 @@ export default function OrderCheckout(){
     const [successmessage, setSuccessMessage] = useState("")
     const [popUpMessageOpen, setPopUpMessageOpen] = useState(false)
     const custId = cartState.custId
+    // console.log(detState.rest)
 
     useEffect(async ()=> {
         try {
@@ -88,6 +90,7 @@ export default function OrderCheckout(){
             totalSum = totalSum +dish.dishPrice
         })
     }
+    totalSum = Math.round(totalSum*100)/100
     var tax = Math.round(totalSum * (0.0925)*100)/100
     var total = Math.round((totalSum + tax)*100)/100
     
@@ -120,8 +123,9 @@ export default function OrderCheckout(){
         <div>
             <AppBar />
             <div className={classes.column1}>
-                    <Typography component="div" variant="h2">
-                        {(cartState.dishes.length>0 && cartState.dishes[0].restId)&&<div>Restaurant Name: {cartState.dishes[0].restId}</div> }
+                    <Typography component="div" variant="h4">
+                    {/* {cartState.dishes[0].restId} */}
+                        {(cartState.dishes.length>0 && cartState.dishes[0].restId)&&<div>Restaurant Name: {detState.restaurant.name} </div> }
                      </Typography>
                      <Typography component="div" variant="h6">
                         Your Items

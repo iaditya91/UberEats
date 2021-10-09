@@ -8,6 +8,7 @@ import { List, Drawer,ListItem } from '@mui/material';
 import {
   Navbar, Nav, FormControl, Form, ListGroupItem,
 } from 'react-bootstrap';
+import IconButton from '@mui/material/IconButton';
 import uberlogo from '../images/ubereats.svg';
 import { logoutCustomer } from '../reducers/actions/customer';
 import { logoutRestaurant } from '../reducers/actions/restaurant';
@@ -20,6 +21,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
 import { useEffect } from 'react';
+import MenuIcon from '@mui/icons-material/Menu';
 
 export default function AppBarPrimary() {
   const [toggleDraw, setToggleDraw] = useState(false)
@@ -62,9 +64,9 @@ export default function AppBarPrimary() {
   return (
     <Navbar bg="light" expand="lg">
       {/* Drawer */}
-      <Button  onClick={toggleDrawer('toggleDraw', true)}>
-        Menu
-      </Button>
+      <IconButton  onClick={toggleDrawer('toggleDraw', true)}>
+        <MenuIcon/>
+      </IconButton>
     <Drawer
       anchor={'left'}
       open={toggleDraw}
@@ -72,15 +74,14 @@ export default function AppBarPrimary() {
     >
       <List>
      
-        <ListItemButton><Link to="/login/restaurant">Restaurant Login</Link></ListItemButton>
-        <ListItemButton><Link to="/register/restaurant">Register Your Restaurant</Link></ListItemButton>
-        
+        <ListItemButton onClick={()=>hist.push('/login/restaurant')}><h6>Restaurant Login</h6></ListItemButton>
+        <ListItemButton onClick={()=>hist.push('/login/restaurant')}><h6>Register Your Restaurant</h6></ListItemButton>
         
       </List>
     </Drawer>
 
       <Navbar.Brand href="/">
-        <img src={uberlogo} width="200px" alt="text" />
+        <img style={{marginLeft: "20px"}}src={uberlogo} width="200px" alt="text" />
       </Navbar.Brand>
       <div style={{marginLeft:'auto'}}>
           <Navbar.Toggle aria-controls="navbarScroll" />
@@ -108,10 +109,6 @@ export default function AppBarPrimary() {
             <DialogTitle id="alert-dialog-title">{"Cart"}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-              {/* <Box    component="form" 
-                      sx={{'& .MuiTextField-root': { m: 1, width: '25ch' },}}
-                      noValidate
-                      autoComplete="off"> */}
               <Box    sx={{'& .MuiTextField-root': { m: 1, width: '25ch' },}}>
                           <form  >
                           <div>
@@ -127,7 +124,6 @@ export default function AppBarPrimary() {
                                </div>
                             )
                           })}
-                          {/* <Typography component="div" variant="h5">Total: {totalSum}$</Typography> */}
                           </div>
                           <Button variant="contained" onClick={checkOutHandler}>Go To Checkout</Button>
                           </form>

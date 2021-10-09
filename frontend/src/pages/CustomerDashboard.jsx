@@ -103,14 +103,14 @@ function CustomerDashboard() {
   return (
     <div>
       <AppBar/>
-    <div className="container-fluid">
+    <div style={{marginTop: "30px"}} className="container-fluid">
       <div>
-        <h4>Crave it? get it</h4>
+        <h4>All Stores</h4>
       </div>
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-3">
-            <h2>All Stores</h2>
+            <h3>Delivery Type</h3>
 
             <RadioGroup          
               onChange={(e) => {
@@ -152,21 +152,16 @@ function CustomerDashboard() {
             <div className="row">
             {displayrestaurants.map((res) => (
                 <div key={res.restId} className="col-md-4">
-                  {/* <StyledLink href={`/restaurants/RestaurantPage/${res.rest_id}`}> */}
                     <Card key={res.restId}  className={classes.card}
-                      // overrides={{ Root: { style: { width: '250px' } } }}
-                      // headerImage= {res.profileImg}//"https://source.unsplash.com/user/erondu/700x400"
                       title={res.name}>
                         <div >
-                      <img  style= {{ width: '280px' }} onClick={()=>{hist.push(`/restaurantMain/${res.restId}`)}} src={res.profileImg}/>
+                      <img  style= {{ width: '280px' , height:'200px'}} onClick={()=>{hist.push(`/restaurantMain/${res.restId}`)}} src={res.profileImg}/>
                       <StyledBody
                           className={classes.overlay}
-                      ><IconButton onClick={()=>{
+                      ><IconButton varient="contained" onClick={()=>{
                         favClickHandler(res)}} aria-label="favorite"><FavoriteIcon/></IconButton></StyledBody>
-                      <StyledBody >{res.description}</StyledBody>
                       </div>
                     </Card>
-                  {/* </StyledLink> */}
                 </div>
               ))}
             </div>

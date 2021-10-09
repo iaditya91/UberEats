@@ -1,8 +1,8 @@
 /* eslint-disable */
 export function setCustomerDetails(payload) {
-    return { type: 'CREATE_CART', payload };
+    return { type: 'SET_CUSTOMER_DETAILS', payload };
   }
   
 export function setRestaurantDetails(payload) {
-    return { type: 'ADD_TO_CART', payload };
+    return { type: 'SET_RESTAURANT_DETAILS', payload };
   }

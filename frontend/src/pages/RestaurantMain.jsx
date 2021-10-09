@@ -15,6 +15,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {createCart, addDishToCart} from '../reducers/actions/cartActions'
 import jwt_decode from 'jwt-decode';
 import { useParams } from 'react-router';
+import { setRestaurantDetails } from '../reducers/actions/detActions';
 
 
 
@@ -74,6 +75,7 @@ export default function RestaurantMain(){
                 const response = await axiosInstance.get(`/restaurants/${restId}`);
                 setRestaurant(response.data.rest)
                 dispatch(createCart({custId}))
+                dispatch(setRestaurantDetails({restaurant: response.data.rest}))
             } catch (error) {
             console.log(error);}
         },[]);
@@ -85,51 +87,44 @@ export default function RestaurantMain(){
             <div>
             <Typography variant="subtitle1" color="text.secondary" component="div">
                 <img style={{width:"100%", height:400}} src={restaurant.profileImg} alt="This is image of restaurant"/><br/>
-                {restaurant.name}<br/>
-                Address: {restaurant.address}<br/>
-                Description: {restaurant.description}<br/>
+                <div style={{ margin: "20px 20px 20px 20px"}}>
+                <h5><b>{restaurant.name}</b></h5>
+                {restaurant.address&&<p><b>Address: </b>{restaurant.address}<br/></p>}
+                {restaurant.description&&<p><b>Description: </b>{restaurant.description}<br/></p>}
+                </div>
                  </Typography>         
             
         </div>
         <br/><br/>
-        <Typography variant="h3" color="text.secondary" component="div"> Menu</Typography>
-        <div>
-            <Grid container spacing={4} direction="row">
+        <Typography variant="h3" color="text.secondary" component="div" style={{marginLeft:"10px"}}> Menu</Typography>
+        <div style={{ margin: "20px 20px 20px 20px", display:"grid", gridGap:"20px",gridTemplateRows:"repeat(2,170px)",gridTemplateColumns:"repeat(auto-fill, 420px)"}}>
             {dishes.length > 0  && dishes.map((dish) => {
                     return (
-                        
-                          <Grid item key={dish.dishId} xs={4} >
-                            <Card sx={{ display: 'flex' }}>
-                            <Box sx={{ display: 'flex' }}>
-
-                            <CardContent sx={{ flex: '1 0 auto' }}>
+                            <Card>
+                            <Box style={{ display: 'flex' ,flexDirection:'columns', width:"100%", height:"100%"}}>
+                            <CardContent style={{display: 'grid' ,gridTemplateRows:'repeat(2,30px)'}}>
                                 <Typography component="div" variant="h5">
                                    {dish.name}
                                 </Typography>
                                 <Typography variant="subtitle1" color="text.secondary" component="div">
                                    Price: {dish.dishPrice} $
                                 </Typography>
-                                <Typography variant="subtitle1" color="text.secondary" component="div">
+                                <Typography style ={{height:"20px"}}variant="subtitle1" color="text.secondary" component="div">
                                    {dish.description}
                                 </Typography>
                                 <Button onClick={()=>cardOnClickHandler(dish)} variant="contained">Add to Cart</Button>
                             </CardContent>
-                            <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-          
-                            </Box>
-                            </Box>
-                            <CardMedia
+                            <CardMedia style={{marginLeft:"auto"}}
                                 component="img"
                                 sx={{ width: 151 }}
-                                image="/static/images/cards/live-from-space.jpg"
+                                image={dish.dishImg}
                                 alt="Dish Image"
                             />
+                            </Box>  
                         </Card>
-                        </Grid>
                      ) 
 
             })}
-            </Grid>
         </div>
        </div>
     )
