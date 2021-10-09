@@ -123,6 +123,10 @@ const restaurant = sequelize.define('restaurant', {
     type: Sequelize.ENUM,
     values: ['Pickup', 'Delivery'],
   },
+  dietary: {
+    type: Sequelize.ENUM,
+    values: ['Veg', 'Non-veg', 'Vegan'],
+  },
 });
 
 const custFavs = sequelize.define('custFavs', {

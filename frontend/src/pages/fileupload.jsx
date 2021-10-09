@@ -14,7 +14,7 @@ export default function fileupload() {
             console.log(error)
         })
     }
-    console.log(process.env.REACT_APP_ACCESSKEYID)
+    
     return (
       <div>
         <AppBar/>

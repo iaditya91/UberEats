@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { getRestaurantData } from '../functions/restaurants';
+import { getRestaurantData, getCustomerData } from '../functions/backendapicalls';
 import { Button, SHAPE, SIZE } from 'baseui/button';
 import { RadioGroup, Radio, ALIGN } from 'baseui/radio';
 import { Card, StyledBody } from 'baseui/card';
@@ -10,11 +10,12 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { makeStyles, StylesContext } from '@mui/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import {addRestToFav} from '../reducers/actions/favActions';
+import jwt_decode from 'jwt-decode';
 
 const useStyles = makeStyles((theme)=>({
   media: {
     height: 0,
-    paddingTop: '56.25%' // 16:9
+    paddingTop: '56.25%'
  },
  card: {
     position: 'relative',
@@ -28,40 +29,65 @@ const useStyles = makeStyles((theme)=>({
 }))
 
 function CustomerDashboard() {
-  const [restaurants, setRestaurants] = useState([]);
-  const [value, setValue] = React.useState('1');
-  const [loading, setLoading] = useState(false);
-  const [searchValue, setsearchValue] = useState('');
+  const [restaurants, setRestaurants] = useState([])
+  const [userCity, setUserCity] = useState('nocity')
+  const [displayrestaurants, setDisplayRestaurants] = useState([])
+  const [filteredrestaurants, setFilteredRestaurants] = useState([])
+  const [value, setValue] = React.useState('1')
+  const [mode, setMode] = React.useState('')
   const classes = useStyles()
   const dispatch = useDispatch()
+  const token = sessionStorage.getItem('token');
+  var custId = null;
+  if(token){
+  const decoded = jwt_decode(token);
+     custId = decoded.id;
+  }
+  console.log(custId)
 
   useEffect(() => {
-    // console.log(propertyNames);
-    loadAllRestaurants();
-    // addSearchInput();
-  }, []);
+    if(custId){
+      loadCustomerDetails(loadAllRestaurants)
+    }
+    else{
+    loadAllRestaurants()
+    }
+  }, [])
 
-  const addSearchInput = (value) => {
-    setsearchValue({ searchValue: value });
+  useEffect(() => {
+    setDisplayRestaurants(filteredrestaurants)
+  }, [filteredrestaurants])
+
+  const loadCustomerDetails = (callback) => {
+    console.log('load cust details')
+    getCustomerData(custId)
+      .then((res) => {
+        console.log(res.data.user);
+        setUserCity(res.data.user.city)
+      })
+      .catch((err) => console.log(err));
+      console.log(usercity)
+      callback()
   };
-  console.log(restaurants);
-
 
   const loadAllRestaurants = () => {
-    getRestaurantData('hyderabad')
+    getRestaurantData(userCity)
       .then((res) => {
-        //console.log(Object.values(res.data));
-         console.log(res.data.restaurants);
+        console.log(res.data.restaurants);
         setRestaurants(res.data.restaurants);
-        // console.log(res.data);
-        setLoading(false);
+        setDisplayRestaurants(res.data.restaurants);
       })
       .catch((err) => console.log(err));
   };
 
   const favClickHandler =(favRestaurant)=>{
-    console.log('working!')
     dispatch(addRestToFav({favRestaurant}))
+  }
+
+  const dietHandler =(diet)=>{
+    console.log(diet)  
+    let filteredrest = restaurants.filter(rest=>rest.dietary==diet)
+    setDisplayRestaurants(filteredrest)
   }
 
   return (
@@ -75,37 +101,39 @@ function CustomerDashboard() {
         <div className="row">
           <div className="col-md-3">
             <h2>All Stores</h2>
+
             <RadioGroup
-              value={value}
-              onChange={(e) => setValue(e.currentTarget.value)}
+              
+              onChange={(e) => {
+                let curmode = e.currentTarget.value
+                setMode(e.currentTarget.value)
+                if(curmode==='Delivery' || curmode==='Pickup'){
+                    let filteredrest = restaurants.filter(rest=> rest.deliveryType==curmode)
+                    setDisplayRestaurants(filteredrest)
+                }
+                else{
+                  setDisplayRestaurants(restaurants)
+                }
+              }
+              }
+              value={mode}
               name="number"
               align={ALIGN.vertical}
             >
-              <Radio value="11">Delivary</Radio>
-              <Radio value="22">Pickup</Radio>
+              <Radio value="All">All</Radio>
+              <Radio value="Delivery">Delivery</Radio>
+              <Radio value="Pickup">Pickup</Radio>
             </RadioGroup>
-            <Button shape={SHAPE.pill} size={SIZE.default} onClick="filterrestuarants()">
-              Pickup
-            </Button>
-            <RadioGroup
-              value={value}
-              onChange={(e) => setValue(e.currentTarget.value)}
-              name="number"
-              align={ALIGN.vertical}
-            >
-              <Radio value="1">Picked for you(default)</Radio>
-              <Radio value="2">Most Popular</Radio>
-              <Radio value="3">Rating</Radio>
-              <Radio value="4">Delivery time</Radio>
-            </RadioGroup>
+
+
             <h4>Dietary</h4>
-            <Button shape={SHAPE.pill} size={SIZE.default} onClick="filterrestuarants">
+            <Button shape={SHAPE.pill} size={SIZE.default} onClick={(e)=>dietHandler('Veg')}>
               Vegetarian
             </Button>
-            <Button shape={SHAPE.pill} size={SIZE.default}>
+            <Button shape={SHAPE.pill} size={SIZE.default} onClick={(e)=>dietHandler('Vegan')}>
               Vegan
             </Button>
-            <Button shape={SHAPE.pill} size={SIZE.default}>
+            <Button shape={SHAPE.pill} size={SIZE.default} onClick={(e)=>dietHandler('Non-veg')}>
               Non-veg
               </Button>
           </div>
@@ -113,10 +141,10 @@ function CustomerDashboard() {
 
           <div className="col-md-9">
             <div className="row">
-            {restaurants.map((res) => (
+            {displayrestaurants.map((res) => (
                 <div className="col-md-4">
                   {/* <StyledLink href={`/restaurants/RestaurantPage/${res.rest_id}`}> */}
-                    <Card className={classes.card}
+                    <Card key={res.restId} className={classes.card}
                       overrides={{ Root: { style: { width: '250px' } } }}
                       headerImage="https://source.unsplash.com/user/erondu/700x400"
                       title={res.name}>

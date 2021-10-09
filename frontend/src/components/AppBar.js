@@ -96,7 +96,7 @@ export default function AppBarPrimary() {
 
           {(!Custtoken.token || !Resttoken.token)&&<Nav.Link href="/login/customer">Login</Nav.Link>}
           {(!Custtoken.token || !Resttoken.token)&&<Nav.Link href="/register/customer">Register</Nav.Link>}
-          {(!Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/customerFavorites')}>Favourites</Nav.Link>}
+          {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/customerFavorites')}>Favourites</Nav.Link>}
           {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/customer/update')}>Update Profile</Nav.Link>}
           {(Custtoken.token)&&<Nav.Link onClick={handleClickOpenCart}>Cart</Nav.Link>}
           <Dialog

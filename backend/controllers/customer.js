@@ -66,9 +66,9 @@ const loginCustomer = async (req, res) => {
 const getCustomer = async (req, res) => {
   try {
     const { custId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
+    // if (String(req.headers.id) !== String(custId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
     const user = await customer.findOne({
       where: { custId },
     });
@@ -86,9 +86,9 @@ const getCustomer = async (req, res) => {
 const updateCustomer = async (req, res) => {
   try {
     const { custId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
+    // if (String(req.headers.id) !== String(custId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
     const [updated] = await customer.update(req.body, {
       where: { custId },
     });
@@ -204,8 +204,12 @@ const getAllCustomerRestaurants = async (req, res) => {
     // eslint-disable-next-line camelcase
     const { city } = req.params;
     console.log(city);
-    const restaurants = await restaurant.findAll({ where: { city } });
-    // console.log(dishes);
+    if(city=='nocity'){
+      var restaurants = await restaurant.findAll();
+    }
+    else{
+      var restaurants = await restaurant.findAll({ where: { city } });
+    }
     if (!restaurants) return res.status(404).json({ error: 'Restaurant not found!' });
     return res.status(200).json({ restaurants });
   } catch (error) {

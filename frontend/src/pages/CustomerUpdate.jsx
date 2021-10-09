@@ -12,7 +12,6 @@ import uberlogo from '../images/ubereats.svg';
 import uberlogoRes from '../images/uberLogoRes.png';
 import AppBar from '../components/AppBar';
 import { useHistory } from 'react-router';
- 
 import { uploadFile } from 'react-s3';
 import {awsConf} from '../config/awsConfig';
 
@@ -25,8 +24,6 @@ function CustomerUpdate() {
     const [state, setState] = useState('');
     const [country, setCountry] = useState('');
     const [about, setAbout] = useState('');
-    const [start_time, setStarttime] = useState('');
-    const [end_time, setEndtime] = useState('');
     const [nickName, setNickName] = useState('');
     const [image, setImage] = useState('');
     const hist = useHistory();
@@ -37,24 +34,23 @@ function CustomerUpdate() {
     const fetchRestaurantData = useCallback(async () => {
       const token = sessionStorage.getItem('token');
       const decoded = jwt_decode(token);
-      const response = await axiosInstance.get(`customers/${decoded.id}`, {
-        headers: { Authorization: token },
-      });
+      const response = await axiosInstance.get(`customers/${decoded.id}`)
+      // , {
+      //   headers: { Authorization: token },
+      // });
       console.log(response);
       try {
-        setEmail(response.data.cust.email_id);
-        setPassword(response.data.cust.password);
-        setContact(response.data.cust.contact_no);
-        setName(response.data.cust.name);
-        setCity(response.data.cust.city ? response.data.cust.city : '');
-        setState(response.data.cust.state ? response.data.cust.state : '');
+        setEmail(response.data.user.email_id);
+        setPassword(response.data.user.password);
+        setContact(response.data.user.contact_no);
+        setName(response.data.user.name);
+        setCity(response.data.user.city ? response.data.cust.city : '');
+        setState(response.data.user.state ? response.data.cust.state : '');
         setAbout(
-          response.data.cust.about ? response.data.cust.about : ''
+          response.data.user.about ? response.data.user.about : ''
         );
-        setStarttime(response.data.cust.start_time ? response.data.cust.start_time : '');
-        setEndtime(response.data.cust.end_time ? response.data.cust.end_time : '');
         setNickName(
-          response.data.cust.nickName ? response.data.cust.nickName : ''
+          response.data.user.nickName ? response.data.user.nickName : ''
         );
         
       } catch (error) {
@@ -73,8 +69,6 @@ function CustomerUpdate() {
         state,
         country,
         about,
-        start_time,
-        end_time,
         profileImg: image,
         nickName
       };
@@ -86,7 +80,7 @@ function CustomerUpdate() {
           headers: { Authorization: token },
         });
         console.log(response);
-        hist.push('/restaurantAdmin');
+        hist.push('/customer/dashboard');
       } catch (error) {
         console.log(error);
       }
@@ -95,6 +89,7 @@ function CustomerUpdate() {
     useEffect(() => {
       fetchRestaurantData();
     }, []);
+
     return (
       <div>
         <AppBar />
@@ -155,19 +150,19 @@ function CustomerUpdate() {
                   </FormControl>
                   <FormControl>
                     <Input
-                      value={name}
-                      type="text"
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Name"
+                      value={city}
+                      type="city"
+                      onChange={(e) => setCity(e.target.value)}
+                      placeholder="City"
                       autoFocus
                     />
                   </FormControl>
                   <FormControl>
                     <Input
-                      value={city}
-                      type="city"
-                      onChange={(e) => setCity(e.target.value)}
-                      placeholder="City"
+                      value={state}
+                      type="text"
+                      onChange={(e) => setState(e.target.value)}
+                      placeholder="State"
                       autoFocus
                     />
                   </FormControl>
@@ -185,7 +180,7 @@ function CustomerUpdate() {
                       value={about}
                       type="text"
                       onChange={(e) => setAbout(e.target.value)}
-                      placeholder="State"
+                      placeholder="About"
                       autoFocus
                     />
                   </FormControl>
