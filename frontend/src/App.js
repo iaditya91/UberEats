@@ -13,25 +13,26 @@ import Restaurants from './pages/Restaurants';
 import RestaurantMain from './pages/RestaurantMain';
 import RestaurantAdmin from './pages/RestaurantAdmin';
 import OrderCheckout from './pages/OrderCheckout';
-import ViewOrders from './pages/ViewOrders';
+import ViewOrders from './pages/ViewRestaurantOrders';
 import CustomerFavourtes from './pages/CustomerFavourtes';
 import CustomerDashboard from './pages/CustomerDashboard';
 import fileupload from './pages/fileupload';
 import CustomerUpdate from './pages/CustomerUpdate';
+import ViewRestaurantOrders from './pages/ViewOrders';
 
 function App() {
   return (
     <React.Suspense fallback={<span>Loading...</span>}>
       <Router>
         <Switch>
-          <Route exact path="/" component={LandingPage} />
+          <Route exact path="/" component={CustomerDashboard} />
           <Route path="/login/restaurant" component={LoginRestaurant} />
           <Route path="/login/customer" component={LoginCustomer} />
           <Route path="/register/customer" component={CustomerSignup} />
           <Route path="/register/restaurant" component={RestaurantSignup} />
           <Route path="/restaurants/update" component={RestaurantUpdate} />
           <Route path="/customer/update" component={CustomerUpdate} />
-          <Route path="/restaurantMain" component={RestaurantMain} />
+          <Route path="/restaurantMain/:restId" component={RestaurantMain} />
           <Route path="/restaurantAdmin" component={RestaurantAdmin} />
           <Route path="/restaurants" component={Restaurants} />          
           <Route path="/customers" component={RestaurantSignup} />
@@ -39,7 +40,8 @@ function App() {
           <Route path="/media" component={MediaUploader} />
           <Route path="/viewOrders" component={ViewOrders} />
           <Route path="/customerFavorites" component={CustomerFavourtes} />
-          <Route path="/customer/dashboard" component={CustomerDashboard} />
+          <Route path="/viewRestaurantOrders" component={ViewRestaurantOrders} />
+          {/* <Route path="/customer/dashboard" component={CustomerDashboard} /> */}
           <Route path="/upload" component={fileupload} />
         </Switch>
       </Router>
