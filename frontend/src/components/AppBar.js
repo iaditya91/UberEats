@@ -18,10 +18,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import axiosInstance from '../config/axiosConfig';
 import ListItemButton from '@mui/material/ListItemButton';
 import { useEffect } from 'react';
-import {CustomerUpdate} from '../pages/CustomerUpdate';
 
 export default function AppBarPrimary() {
   const [toggleDraw, setToggleDraw] = useState(false)
@@ -94,10 +92,12 @@ export default function AppBarPrimary() {
             <Button variant="outline-success">Search</Button>
           </Form>
 
-          {(!Custtoken.token || !Resttoken.token)&&<Nav.Link href="/login/customer">Login</Nav.Link>}
-          {(!Custtoken.token || !Resttoken.token)&&<Nav.Link href="/register/customer">Register</Nav.Link>}
+          {(!Custtoken.token && !Resttoken.token)&&<Nav.Link href="/login/customer">Login</Nav.Link>}
+          {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/')}>Home</Nav.Link>}
           {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/customerFavorites')}>Favourites</Nav.Link>}
           {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/customer/update')}>Update Profile</Nav.Link>}
+          {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/viewOrders')}>View Orders</Nav.Link>}
+          {(Resttoken.token)&&<Nav.Link onClick={()=>hist.push('/viewRestaurantOrders')}>View Orders</Nav.Link>}
           {(Custtoken.token)&&<Nav.Link onClick={handleClickOpenCart}>Cart</Nav.Link>}
           <Dialog
               open={openCart}

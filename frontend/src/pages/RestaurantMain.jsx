@@ -14,11 +14,12 @@ import RestaurantHome from '../images/RestaurantHome.jpg'
 import { useSelector, useDispatch } from 'react-redux';
 import {createCart, addDishToCart} from '../reducers/actions/cartActions'
 import jwt_decode from 'jwt-decode';
+import { useParams } from 'react-router';
 
 
 
 const token = sessionStorage.getItem('token');
-const restId =  1 //sessionStorage.getItem('restId')
+// const restId =  1 //sessionStorage.getItem('restId')
 
 const useStyles = makeStyles(theme=>({
     root: {
@@ -32,6 +33,7 @@ const useStyles = makeStyles(theme=>({
 
 export default function RestaurantMain(){
     const classes= useStyles()
+    const {restId} = useParams()
     const dispatch = useDispatch()
     const [dishes,setDishes] = useState({})
     const [restaurant, setRestaurant] = useState({})
@@ -82,7 +84,7 @@ export default function RestaurantMain(){
 
             <div>
             <Typography variant="subtitle1" color="text.secondary" component="div">
-                <img style={{width:"100%", height:300}} src={RestaurantHome} alt="This is image of restaurant"/><br/>
+                <img style={{width:"100%", height:400}} src={restaurant.profileImg} alt="This is image of restaurant"/><br/>
                 {restaurant.name}<br/>
                 Address: {restaurant.address}<br/>
                 Description: {restaurant.description}<br/>

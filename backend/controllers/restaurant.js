@@ -70,14 +70,25 @@ const getRestaurant = async (req, res) => {
   }
 };
 
-const imageUpload = async (req, res)=>{
-  try{
-    console.log('img upload')
-  }
-  catch(error){
-    console.log(error)
-  }
-}
+// const { Op } = require("sequelize");
+// const searchRestaurant = async (req, res) => {
+//   try {
+//     const { searchquery } = req.params;
+//     const key = searchquery.toLowerCase()
+//     console.log(key)
+//     const rest = await restaurant.findAll({
+//       deliveryType: { [Op.like]: '%' + "paradise" + '%' },
+//       // name: { [Op.like]: '%' + "paradise" + '%' }
+//     });
+
+//     if (rest) {
+//       return res.status(200).json({ rest });
+//     }
+//     return res.status(404).json({ error: 'Restaurant with the ID does not exist!' });
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+// };
 
 const updateRestaurant = async (req, res) => {
   try {
@@ -212,9 +223,9 @@ module.exports = {
   deleteRestaurant,
   getRestaurants,
   createDish,
-  imageUpload,
   getRestaurantDishes,
   getRestaurantDish,
   updateRestaurantDish,
   deleteRestaurantDish,
+  // searchRestaurant,
 };

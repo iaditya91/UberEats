@@ -58,7 +58,7 @@ const CustomerSignup = () => {
   return (
     <div>
       <AppBar />
-      <div>
+      <div style={{ display: 'flex', justifyContent: 'center',alignItems:'center',height:'75vh' }}>
       
       
       

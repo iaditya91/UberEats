@@ -6,6 +6,7 @@ import { Input } from 'baseui/input';
 import { Button } from 'baseui/button';
 import uberlogo from '../images/ubereats.svg';
 import AppBar from '../components/AppBar';
+import { Link } from '@mui/material';
 
 import axiosInstance from '../config/axiosConfig';
 import {
@@ -31,7 +32,7 @@ function LoginCustomer() {
       console.log(response);
       dispatch(loginCustomerSuccess(response));
       sessionStorage.setItem('token', response.data.token);
-      hist.push('/customer/dashboard');
+      hist.push('/');
     } catch (error) {
       console.log(error);
       dispatch(loginCustomerFailure(error));
@@ -39,9 +40,10 @@ function LoginCustomer() {
   };
 
   return (
-    <div>
+    <div >
       <AppBar />
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div>
+      <div  style={{ display: 'flex', justifyContent: 'center',alignItems:'center',height:'25vh' }}>
         <img src={uberlogo} width="300px" />
       </div>
       <div
@@ -75,7 +77,10 @@ function LoginCustomer() {
             Submit
           </Button>
         </form>
+        
       </div>
+     <p style={{ display: "flex", justifyContent: 'center' }}> New user? register yourself by clicking <Link href="/register/customer"> here</Link></p>
+    </div>
     </div>
   );
 }

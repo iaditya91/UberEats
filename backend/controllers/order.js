@@ -44,8 +44,6 @@ const initOrder = async (req, res) => {
   }
 };
 
-// For updating the status of the order 
-// place order = above + this (so if status = 'Placed' in above below api is not needed)
 const createOrder = async (req, res) => {
   const t = await sequelize.transaction();
   try {
@@ -133,9 +131,9 @@ const getLatestOrder = async (req, res) => {
 const getRestaurantOrders = async (req, res) => {
   try {
     const { restId } = req.params;
-    if (String(req.headers.id) !== String(restId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
+    // if (String(req.headers.id) !== String(restId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
     const restaurantOrders = await order.findAll({
       where: { restId },
       include: [{ model: orderDishes, include: [{ model: dish }] }],

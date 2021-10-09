@@ -11,6 +11,7 @@ import { makeStyles, StylesContext } from '@mui/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import {addRestToFav} from '../reducers/actions/favActions';
 import jwt_decode from 'jwt-decode';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme)=>({
   media: {
@@ -22,9 +23,9 @@ const useStyles = makeStyles((theme)=>({
  },
  overlay: {
     position: 'absolute',
-      top: '5%',
+      top: '17px',
       left: '80%',
-    color: 'black',
+    color: 'pink',
  }
 }))
 
@@ -35,6 +36,7 @@ function CustomerDashboard() {
   const [filteredrestaurants, setFilteredRestaurants] = useState([])
   const [value, setValue] = React.useState('1')
   const [mode, setMode] = React.useState('')
+  const hist = useHistory()
   const classes = useStyles()
   const dispatch = useDispatch()
   const token = sessionStorage.getItem('token');
@@ -50,7 +52,7 @@ function CustomerDashboard() {
       loadCustomerDetails(loadAllRestaurants)
     }
     else{
-    loadAllRestaurants()
+    loadAllRestaurants('nocity')
     }
   }, [])
 
@@ -62,16 +64,18 @@ function CustomerDashboard() {
     console.log('load cust details')
     getCustomerData(custId)
       .then((res) => {
-        console.log(res.data.user);
+        console.log('user city in loadcustdetails '+ res.data.user.city);
         setUserCity(res.data.user.city)
+        callback(res.data.user.city)
+        // console.log(userCity)
       })
       .catch((err) => console.log(err));
-      console.log(usercity)
-      callback()
+      
+      // callback()
   };
 
-  const loadAllRestaurants = () => {
-    getRestaurantData(userCity)
+  const loadAllRestaurants = (curcity) => {
+    getRestaurantData(curcity)
       .then((res) => {
         console.log(res.data.restaurants);
         setRestaurants(res.data.restaurants);
@@ -102,8 +106,7 @@ function CustomerDashboard() {
           <div className="col-md-3">
             <h2>All Stores</h2>
 
-            <RadioGroup
-              
+            <RadioGroup          
               onChange={(e) => {
                 let curmode = e.currentTarget.value
                 setMode(e.currentTarget.value)
@@ -142,18 +145,20 @@ function CustomerDashboard() {
           <div className="col-md-9">
             <div className="row">
             {displayrestaurants.map((res) => (
-                <div className="col-md-4">
+                <div key={res.restId} className="col-md-4">
                   {/* <StyledLink href={`/restaurants/RestaurantPage/${res.rest_id}`}> */}
-                    <Card key={res.restId} className={classes.card}
-                      overrides={{ Root: { style: { width: '250px' } } }}
-                      headerImage="https://source.unsplash.com/user/erondu/700x400"
+                    <Card key={res.restId}  className={classes.card}
+                      // overrides={{ Root: { style: { width: '250px' } } }}
+                      // headerImage= {res.profileImg}//"https://source.unsplash.com/user/erondu/700x400"
                       title={res.name}>
-                      
+                        <div >
+                      <img  style= {{ width: '280px' }} onClick={()=>{hist.push(`/restaurantMain/${res.restId}`)}} src={res.profileImg}/>
                       <StyledBody
                           className={classes.overlay}
-                      ><IconButton onClick={()=>favClickHandler(res)} aria-label="favorite" component="span"><FavoriteIcon/></IconButton></StyledBody>
-                      <StyledBody>{res.description}</StyledBody>
-                      
+                      ><IconButton onClick={()=>{
+                        favClickHandler(res)}} aria-label="favorite"><FavoriteIcon/></IconButton></StyledBody>
+                      <StyledBody >{res.description}</StyledBody>
+                      </div>
                     </Card>
                   {/* </StyledLink> */}
                 </div>

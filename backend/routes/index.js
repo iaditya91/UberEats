@@ -64,10 +64,8 @@ router.delete(
   restaurantController.deleteRestaurant,
 );
 router.get('/customers/city/:city', customerController.getAllCustomerRestaurants);
+// router.get('/restaurants/search/:searchquery', restaurantController.searchRestaurant);
 
-// router.post('/restaurants/:restId/imageUpload', upload.single('image'), (req, res)=>{
-//   res.send('img upload working!')
-// });
 
 // Restaurant Dishes routes
 router.post(

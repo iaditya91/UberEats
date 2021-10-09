@@ -11,8 +11,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-
-const custId = 1
+import jwt_decode from 'jwt-decode';
 
 const useStyles = makeStyles((theme)=>({
   container:{
@@ -28,12 +27,18 @@ const useStyles = makeStyles((theme)=>({
 }));
      
 
-export default function ViewOrders() {
+export default function ViewRestaurantOrders() {
     const classes = useStyles()
     const [orders, setOrders] = useState([])
     const [restaurantNames, setRestaurantNames] = useState({})
     const [openReceipt, setOpenReceipt] = React.useState(false);
     const [selectedOrder, setSelectedOrder] = useState({})
+    var custId = null;
+    const token = sessionStorage.getItem('token');
+    if(token){
+        const decoded = jwt_decode(token);
+        custId = decoded.id;
+    }
     console.log(restaurantNames)
     var restNames = {}
 
@@ -53,16 +58,11 @@ export default function ViewOrders() {
     },[]);
 
     console.log(restaurantNames)
-    const viewReciptHandler = (orderId)=>{   
-      // console.log(orders)
-      // console.log(orderId)
+    const viewReciptHandler = (orderId)=>{
       console.log('view recipt handler')
       const curorder = orders.filter(order=>order.orderId ==orderId)
       setOpenReceipt(true)
       setSelectedOrder(curorder[0])
-      // console.log(curorder[0])
-      // console.log(selectedOrder)
-      
     }
 
     const handleReceiptClose = () => {

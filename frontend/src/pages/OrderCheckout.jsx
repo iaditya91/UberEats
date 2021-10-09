@@ -15,7 +15,7 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
 import {setDelivaryAddress} from "../reducers/actions/orderActions"
-import Snackbar from '@mui/material/Snackbar';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles(theme=>({
     column1:{
@@ -34,6 +34,7 @@ const useStyles = makeStyles(theme=>({
 }))
 
 export default function OrderCheckout(){
+    const hist = useHistory()
     const cartState = useSelector(state=>state.cart)
     const orderState = useSelector(state=>state.order)
     const dispatch = useDispatch()
@@ -43,13 +44,11 @@ export default function OrderCheckout(){
     const [selectedAddress, setSelectedAddress] = useState()
     const [successmessage, setSuccessMessage] = useState("")
     const [popUpMessageOpen, setPopUpMessageOpen] = useState(false)
-    const custId = 1 //cartState.custId
+    const custId = cartState.custId
 
     useEffect(async ()=> {
         try {
             const response = await axiosInstance.get(`customers/${custId}/addresses`);
-            // console.log('address from table')
-            // console.log(response.data.existingAddresses)
             dispatch(setDelivaryAddress({address:response.data.existingAddresses}))
         } catch (error) {
         console.log(error);}
@@ -58,8 +57,6 @@ export default function OrderCheckout(){
         useEffect(async ()=> {
             try {
                 const response = await axiosInstance.get(`customers/${custId}/addresses`);
-                // console.log('address from table')
-                // console.log(response.data.existingAddresses)
                 dispatch(setDelivaryAddress({address:response.data.existingAddresses}))
             } catch (error) {
             console.log(error);}
@@ -68,7 +65,6 @@ export default function OrderCheckout(){
     const placeOrderHandler = async ()=>{
         console.log("Placeorder clicked")
 
-        // console.log(selectedAddress[0].address)
         const orderObj ={
             orderType:"Delivery",
             price: totalSum,
@@ -79,10 +75,9 @@ export default function OrderCheckout(){
         }
         try {
             const response = await axiosInstance.post(`/customers/${custId}/orders/init`, orderObj);
+            console.log("HERE")
             console.log(response)
-            // setSuccessMessage(response.data.message)
-            // setSuccessMessage("this is message")
-            // setPopUpMessageOpen(true)
+            hist.push('/vieworders')
         } catch (error) {
             console.log(error);}
     }
@@ -94,7 +89,7 @@ export default function OrderCheckout(){
         })
     }
     var tax = Math.round(totalSum * (0.0925)*100)/100
-    var total = totalSum + tax
+    var total = Math.round((totalSum + tax)*100)/100
     
 
     const newAddressOnChange =(event)=>{
@@ -124,7 +119,7 @@ export default function OrderCheckout(){
     return (
         <div>
             <AppBar />
-            <div className={classes.column1} style={{backgroundColor:"#b8b7fd"}}>
+            <div className={classes.column1}>
                     <Typography component="div" variant="h2">
                         {(cartState.dishes.length>0 && cartState.dishes[0].restId)&&<div>Restaurant Name: {cartState.dishes[0].restId}</div> }
                      </Typography>
@@ -162,7 +157,7 @@ export default function OrderCheckout(){
                     
                     
              </div>
-             <div className={classes.column2} style={{backgroundColor:"#b8b7fd"}}>
+             <div className={classes.column2}>
              <Button sx={{'background-color': "green"}} onClick={()=>placeOrderHandler()} variant="contained">Place Order</Button>
              {(selectedAddress)&&<Typography component="div" variant="subtitle1">Selected Delivary Address: {selectedAddress[0].address}
                      </Typography>}

@@ -114,7 +114,6 @@ export default function RestaurantAdmin(){
         try {
             const response = await axiosInstance.put(`/restaurants/${restId}/dishes/${dishId}`, updateDish);
             console.log(response);
-            // hist.push('/restaurantAdmin');
             window.location.reload(false);
           } catch (error) {
             console.log(error);
@@ -227,6 +226,16 @@ export default function RestaurantAdmin(){
                                               label="Price"
                                               onChange={handleUpdateMenuChange}
                                             />
+                                            <input
+                                                type="file"
+                                                name=""
+                                                onChange={(e) => {
+                                                  uploadFile(e.target.files[0], awsConf).then((data)=>{
+                                                    setAddDish({...updateDish, dishImg: data.location})}).catch(error=>{console.log(error)})
+                                                  }}
+                                                placeholder="Restaurant Image"
+                                                autoFocus
+                                            />
                                             <TextField
                                                 select
                                                 name="category"
@@ -240,7 +249,7 @@ export default function RestaurantAdmin(){
                                                 <MenuItem value={"Vegan"}>Vegan</MenuItem>
                                             </TextField>
                                         </div>
-                                        <Button onClick={updateMenuHandler}>Update Menu</Button>
+                                        <Button variant="contained" onClick={updateMenuHandler}>Update Menu</Button>
                                         </form>
                             </Box>
                             </DialogContentText>
@@ -303,7 +312,7 @@ export default function RestaurantAdmin(){
                                                 <MenuItem value={"Vegan"}>Vegan</MenuItem>
                                             </TextField>
                                         </div>
-                                        <Button onClick={addMenuHandler}>Add Menu</Button>
+                                        <Button variant="contained" onClick={addMenuHandler}>Add Menu</Button>
                                         </form>
                             </Box>
                             </DialogContentText>
@@ -335,7 +344,7 @@ export default function RestaurantAdmin(){
                                               onChange={handleDeleteMenuChange}
                                             />
                                         </div>
-                                        <Button onClick={deleteMenuHandler}>Delete Menu</Button>
+                                        <Button variant="contained" onClick={deleteMenuHandler}>Delete Menu</Button>
                                         </form>
                             </Box>
                             </DialogContentText>
