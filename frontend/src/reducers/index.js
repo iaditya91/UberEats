@@ -7,6 +7,7 @@ import restaurantSignupReducer from './ResSignupReducer';
 import cartReducer from './cartReducer';
 import favReducer from './favReducer';
 import orderReducer from './orderReducer';
+import detReducer from './detReducer';
 
 const rootReducer = combineReducers({
   customer: customerReducer,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   cart: cartReducer,
   order: orderReducer,
   favourite: favReducer,
+  details: detReducer,
 });
 
 export default rootReducer;

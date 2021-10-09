@@ -165,9 +165,10 @@ const getCustomerOrders = async (req, res) => {
 const updateOrder = async (req, res) => {
   try {
     const { restId } = req.params;
-    if (String(req.headers.id) !== String(restId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
+    console.log('inside updateorder')
+    // if (String(req.headers.id) !== String(restId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
     const { orderStatus, orderId } = req.body;
     if (!orderStatus) {
       return res
@@ -177,10 +178,10 @@ const updateOrder = async (req, res) => {
     if (!orderId) {
       return res.status(400).json({ error: 'Order not found!' });
     }
-    const updatedOrder = await order.update({
-      orderStatus,
-      where: { orderId },
-    });
+    const updatedOrder = await order.update(
+      { orderStatus},
+      {where: {orderId}} ,
+    );
     return res
       .status(200)
       .json({ message: 'Order status updated!', updatedOrder });
@@ -212,5 +213,5 @@ module.exports = {
   updateOrder,
   getRestaurantOrders,
   getCustomerOrders,
-  getOrderDetailsById,
+  getOrderDetailsById
 };

@@ -176,9 +176,34 @@ const getCustomerFavourites = async (req, res) => {
     // }
     const favRests = await custFavs.findAll({
       where: { custId },
-    }); 
-    console.log(favRests)
+      include: [{ model: restaurant }],
+    });
     return res.status(200).json({ favRests });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const setCustomerFavourites = async (req, res) => {
+  try {
+    const { custId } = req.params;
+    // if (String(req.headers.id) !== String(custId)) {
+    //   return res.status(401).json({ error: 'Unauthorized request!' });
+    // }
+    const {restId} = req.body;
+    const checkExisting = await custFavs.findOne({
+      where: { restId,custId },
+    });
+    if (checkExisting) {
+      return res.status(409).json({
+        error:
+          "Restaurant already set as favourite",
+      });
+    }
+    await custFavs.create({
+        restId, custId
+      });
+    return res.status(200).json({ message: "Favorite restuarant set!" });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -225,6 +250,7 @@ module.exports = {
   addCustomerAddress,
   getCustomerAddresses,
   getCustomerFavourites,
+  setCustomerFavourites,
   deleteCustomer,
   getAllCustomerRestaurants,
 };

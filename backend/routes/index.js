@@ -43,6 +43,7 @@ router.post(
 );
 
 router.get('/customers/:custId', customerController.getCustomer);
+router.post('/customers/favourites/:custId', customerController.setCustomerFavourites);
 router.get('/customers/favourites/:custId', customerController.getCustomerFavourites);
 router.put('/customers/:custId', customerController.updateCustomer);
 router.delete(
@@ -126,6 +127,10 @@ router.get(
 router.get(
   '/customers/:custId/orders',
   orderController.getCustomerOrders,
+);
+router.put(
+  '/restaurants/:restId/updateorder',
+  orderController.updateOrder,
 );
 
 // Customer addresses

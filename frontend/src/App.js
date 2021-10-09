@@ -13,12 +13,12 @@ import Restaurants from './pages/Restaurants';
 import RestaurantMain from './pages/RestaurantMain';
 import RestaurantAdmin from './pages/RestaurantAdmin';
 import OrderCheckout from './pages/OrderCheckout';
-import ViewOrders from './pages/ViewRestaurantOrders';
+import ViewRestaurantOrders from './pages/ViewRestaurantOrders';
 import CustomerFavourtes from './pages/CustomerFavourtes';
 import CustomerDashboard from './pages/CustomerDashboard';
 import fileupload from './pages/fileupload';
 import CustomerUpdate from './pages/CustomerUpdate';
-import ViewRestaurantOrders from './pages/ViewOrders';
+import ViewOrders from './pages/ViewOrders';
 
 function App() {
   return (

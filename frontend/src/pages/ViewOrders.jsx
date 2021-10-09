@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme)=>({
 }));
      
 
-export default function ViewRestaurantOrders() {
+export default function ViewOrders() {
     const classes = useStyles()
     const [orders, setOrders] = useState([])
     const [restaurantNames, setRestaurantNames] = useState({})

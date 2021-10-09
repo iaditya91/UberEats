@@ -19,7 +19,6 @@ import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
-// const custId = 1
 
 const useStyles = makeStyles((theme)=>({
   container:{
@@ -49,19 +48,37 @@ column2:{
 }));
      
 
-export default function ViewOrders() {
+export default function ViewRestaurantOrders() {
     const classes = useStyles()
-    const [orders, setOrders] = useState([]) 
+    const [orders, setOrders] = useState([])
     const [displayOrders, setDisplayOrders] = useState([]) 
     const [filteredOrders, setFilteredOrders] = useState([]) 
     const [openProfile, setOpenProfile] = React.useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState({})
+    const [newOrderStatus, setNewOrderStatus] = useState({})
+
     var restId = null;
     const token = sessionStorage.getItem('token');
     if(token){
         const decoded = jwt_decode(token);
         restId = decoded.id;
     }
+
+    useEffect(() => {
+      // let orderObj = newOrderStatus
+      console.log(newOrderStatus.orderStatus)
+      console.log(newOrderStatus.orderId)
+      axiosInstance.put(`restaurants/${restId}/updateorder/`, newOrderStatus)
+        .then((data)=>{
+          axiosInstance.get(`/restaurants/${restId}/orders`)
+            .then((data)=>{
+              console.log(data.data.restaurantOrders)
+              setOrders(data.data.restaurantOrders)
+            }).catch(error=>console.log(error))
+        }).catch(error=>console.log(error))
+
+      
+    }, [newOrderStatus])
 
     const viewProfileHandler = async(custId)=>{
       console.log('view recipt handler')
@@ -76,6 +93,10 @@ export default function ViewOrders() {
     };
 
     useEffect(() => {
+      // window.location.reload(false);
+    }, [orders])
+
+    useEffect(() => {
       setDisplayOrders(filteredOrders)
     }, [filteredOrders])
 
@@ -84,6 +105,7 @@ export default function ViewOrders() {
             const response = await axiosInstance.get(`/restaurants/${restId}/orders`);         
             console.log(response.data)
             setOrders(response.data.restaurantOrders)
+            console.log(orders)
         } catch (error) {
         console.log(error);}
     },[]);
@@ -97,12 +119,29 @@ export default function ViewOrders() {
         <Typography  component="div" variant="h4">Orders</Typography>  
           <FormControl component="fieldset">
             <RadioGroup
-              aria-label="gender"
+              aria-label="orders"
               defaultValue="new"
               onChange={(e)=>{
-                console.log(e)
-                let curorders = orders.filter(order=> order.orderStatus==e.target.value)
-                setFilteredOrders(curorders)
+                //console.log(e)
+                console.log(e.target.value)
+                // if(orders){
+                if(e.target.value=="Placed"){
+                  let curorders = orders.filter(order=> { return order.orderStatus=="Placed"|| order.orderStatus=="Preparing"})
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+                else if(e.target.value=="Delivered"){
+                  let curorders = orders.filter(order=> { return order.orderStatus=="Delivered"|| order.orderStatus=="Pickup up"})
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+                else if(e.target.value=="Cancelled"){
+                  let curorders = orders.filter(order=>order.orderStatus=="Cancelled")
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+              
+                console.log(filteredOrders)
               }}
               name="radio-buttons-group"
             >
@@ -128,9 +167,9 @@ export default function ViewOrders() {
               <Typography  component="p" variant="subtitle1">Order Details</Typography>
               {order.orderDishes.map(dish=> <div>{dish.dish.name}  {dish.dish.dishPrice}</div>)}
               Price: {order.totalPrice} $<br/>
-              Set Order Status: <Button>Preparing</Button> <Button>Cancel</Button><br/>
+              Set Order Status: <Button onClick={()=>setNewOrderStatus({ orderStatus:"Preparing", orderId:order.orderId})}>Preparing</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Cancelled", orderId:order.orderId})}>Cancel</Button><br/>
               {order.orderType?
-                <p>Set Delivery Status: <Button>Pickup Ready</Button> <Button>Customer Pickuped</Button></p>:<p><Button>Delivery Ready</Button> <Button>Delivered</Button></p>}
+                <p>Set Delivery Status: <Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order.orderId})}>Pickup Ready</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Pickup up", orderId:order.orderId})}>Customer Pickuped</Button></p>:<p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order.orderId})}>Delivery Ready</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Delivered", orderId:order.orderId})}>Delivered</Button></p>}
             </div>
             )
       })  
@@ -147,7 +186,6 @@ export default function ViewOrders() {
         </DialogTitle>
         <IconButton style={{marginLeft:"auto"}}onClick={handleProfileClose}><CloseIcon /></IconButton></div>
         <DialogContent dividers>
-          {/* <img src={selectedCustomer.profileImg} style={{height:"100px", width:"100px"}} alt="Profile Image"/> */}
           <CardMedia
                                 component="img"
                                 sx={{ width: 151 }}
@@ -164,13 +202,6 @@ export default function ViewOrders() {
             State: {selectedCustomer.state}<br/>
             Country: {selectedCustomer.country}<br/>
           </Typography>
-          {/* <Typography gutterBottom>
-            Total ${selectedCustomer.totalPrice}
-          </Typography> */}
-          {/* <Typography gutterBottom>
-          {selectedCustomer.orderDishes && selectedCustomer.orderDishes.map((item)=>{return (
-            <div>{item.dish.name} ${item.dish.dishPrice}</div>)})}
-          </Typography> */}
         </DialogContent>
       </Dialog>
     </div>

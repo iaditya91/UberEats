@@ -9,6 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { makeStyles, StylesContext } from '@mui/styles';
 import { useDispatch, useSelector } from 'react-redux';
+import axiosInstance from '../config/axiosConfig';
 import {addRestToFav} from '../reducers/actions/favActions';
 import jwt_decode from 'jwt-decode';
 import { useHistory } from 'react-router';
@@ -85,7 +86,12 @@ function CustomerDashboard() {
   };
 
   const favClickHandler =(favRestaurant)=>{
-    dispatch(addRestToFav({favRestaurant}))
+    // console.log(favRestaurant.restId)
+    axiosInstance.post(`customers/favourites/${custId}`, {restId:favRestaurant.restId})
+        .then((data)=>{
+            console.log(data)
+        }).catch(error=>console.log(error))
+    // dispatch(addRestToFav({favRestaurant}))
   }
 
   const dietHandler =(diet)=>{
