@@ -16,6 +16,12 @@ import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
 import {setDelivaryAddress} from "../reducers/actions/orderActions"
 import { useHistory } from 'react-router';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import DialogActions from '@mui/material/DialogActions';
 
 const useStyles = makeStyles(theme=>({
     column1:{
@@ -43,8 +49,13 @@ export default function OrderCheckout(){
     const [address, setAddress] = useState()
     const [newAddress, setNewAddress] = useState()
     const [selectedAddress, setSelectedAddress] = useState()
-    const [successmessage, setSuccessMessage] = useState("")
-    const [popUpMessageOpen, setPopUpMessageOpen] = useState(false)
+    const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false);
+
+    const handleSuccessMsgClose = () => {
+        hist.push('/')
+        setOpenSuccessMsg(false);
+      };
+
     const custId = cartState.custId
     // console.log(detState.rest)
 
@@ -79,7 +90,7 @@ export default function OrderCheckout(){
             const response = await axiosInstance.post(`/customers/${custId}/orders/init`, orderObj);
             console.log("HERE")
             console.log(response)
-            hist.push('/vieworders')
+            setOpenSuccessMsg(true)
         } catch (error) {
             console.log(error);}
     }
@@ -173,14 +184,28 @@ export default function OrderCheckout(){
                      </Typography>
              </div>
 
-             {/* {successmessage&&<Snackbar
-                anchorOrigin={ "bottom", "center" }
-                open={popUpMessageOpen}
-                onClose={setPopUpMessageOpen(false)}
-                message={successmessage}
-                // key={vertical + horizontal}
-                />} */}
-            
+             <Dialog
+                onClose={handleSuccessMsgClose}
+                aria-labelledby="customized-dialog-title"
+                open={openSuccessMsg}>
+                  <div style={{display:"flex", flexDirection:"row"}}>
+                {/* <DialogTitle id="customized-dialog-title" onClose={handleSuccessMsgClose}>
+                  Create new order?
+                </DialogTitle> */}
+                <IconButton style={{marginLeft:"auto"}} onClick={handleSuccessMsgClose}><CloseIcon /></IconButton></div>
+                <DialogContent dividers>
+                <Typography gutterBottom>
+                    Order Placed Successfully
+                  </Typography>
+                </DialogContent>
+                <DialogActions>
+                <Button varient='contained' 
+                    onClick={(e)=>{
+                        e.preventDefault()
+                        handleSuccessMsgClose()
+                }} style={{backgroundColor:"black", color:"white"}}>Go To Home</Button>
+                </DialogActions>
+      </Dialog>
         </div>
     );
 };

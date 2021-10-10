@@ -11,7 +11,6 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import axiosInstance from '../config/axiosConfig';
-import RestaurantHome from '../images/RestaurantHome.jpg'
 import { useSelector, useDispatch } from 'react-redux';
 import {createCart, addDishToCart, addRestaurantDetailsToCart, resetCart} from '../reducers/actions/cartActions'
 import jwt_decode from 'jwt-decode';
@@ -61,7 +60,6 @@ export default function RestaurantMain(){
 
     const cardOnClickHandler = async (name)=>{
         console.log('card clicked!');
-        //const dishes = localStorage.getItem(dishes);
         console.log(name);
         
         try {
@@ -75,8 +73,6 @@ export default function RestaurantMain(){
             else{
                 setOpenWarning(true)
             }
-            // const response = await axiosInstance.post(`/customers/${restId}/cart`, {restId:1, dishId:name.dishId});
-            // setRestaurant(response.data.rest)
             console.log(cartState)
         } catch (error) {
         console.log(error);}
