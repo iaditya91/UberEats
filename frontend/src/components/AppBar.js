@@ -12,6 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import uberlogo from '../images/ubereats.svg';
 import { logoutCustomer } from '../reducers/actions/customer';
 import { logoutRestaurant } from '../reducers/actions/restaurant';
+import { setSearchQuery } from '../reducers/actions/searchAction'
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -29,6 +30,7 @@ export default function AppBarPrimary() {
   const hist = useHistory()
   const Custtoken= useSelector(state=>state.customer);
   const Resttoken= useSelector(state=>state.restaurant);
+  const [searchquery, setCurSearchQuery] = useState('')
   const [cart, setCart] = useState({});
   
   const [openCart, setOpenCart] = React.useState(false);
@@ -88,10 +90,14 @@ export default function AppBarPrimary() {
           <Navbar.Collapse id="navbarScroll">
           <Nav className="mr-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
           
-          <Form className="d-flex">
-            <FormControl type="search" placeholder="Search" className="mr-2" aria-label="Search" />
-            <Button variant="outline-success">Search</Button>
-          </Form>
+          {(!Resttoken.token)&&<Form className="d-flex">
+            <FormControl type="search" placeholder="Search" onChange={(e)=>setCurSearchQuery(e.target.value)} className="mr-2" aria-label="Search" />
+            <Button variant="outline-success" onClick={(e)=>{
+              e.preventDefault();
+              console.log("i'm in appbar "+searchquery)
+              dispatch(setSearchQuery({searchquery}))
+            }}>Search</Button>
+          </Form>}
 
           {(!Custtoken.token && !Resttoken.token)&&<Nav.Link href="/login/customer">Login</Nav.Link>}
           {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/')}>Home</Nav.Link>}
