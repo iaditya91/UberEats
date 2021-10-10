@@ -5,6 +5,7 @@ const sequelize = new Sequelize(conf.DB, conf.USER, conf.PASSWORD,{
   host: conf.HOST,
   port: conf.PORT,
   dialect: conf.dialect,
+  logging: false,
   dialectOptions: {
       ssl:'Amazon RDS'
   },

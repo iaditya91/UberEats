@@ -139,7 +139,7 @@ const getRestaurantOrders = async (req, res) => {
       include: [{ model: orderDishes, include: [{ model: dish }] }],
       order: [['createdAt', 'DESC']],
     });
-    return res.json({ restaurantOrders });
+    return res.status(200).json({ restaurantOrders });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
