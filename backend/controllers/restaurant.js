@@ -71,24 +71,21 @@ const getRestaurant = async (req, res) => {
 };
 
 // const { Op } = require("sequelize");
-// const searchRestaurant = async (req, res) => {
-//   try {
-//     const { searchquery } = req.params;
-//     const key = searchquery.toLowerCase()
-//     console.log(key)
-//     const rest = await restaurant.findAll({
-//       deliveryType: { [Op.like]: '%' + "paradise" + '%' },
-//       // name: { [Op.like]: '%' + "paradise" + '%' }
-//     });
+const searchRestaurants = async (req, res) => {
+  try {
+    const { searchquery } = req.params;
+    const rest = await restaurant.findAll({
+      where: { city: searchquery },
+    });
 
-//     if (rest) {
-//       return res.status(200).json({ rest });
-//     }
-//     return res.status(404).json({ error: 'Restaurant with the ID does not exist!' });
-//   } catch (error) {
-//     return res.status(500).json({ error: error.message });
-//   }
-// };
+    if (rest) {
+      return res.status(200).json({ rest });
+    }
+    return res.status(404).json({ error: 'No Restaurants found with the search query!' });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 const updateRestaurant = async (req, res) => {
   try {
@@ -227,5 +224,5 @@ module.exports = {
   getRestaurantDish,
   updateRestaurantDish,
   deleteRestaurantDish,
-  // searchRestaurant,
+  searchRestaurants,
 };

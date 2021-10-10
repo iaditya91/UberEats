@@ -8,6 +8,7 @@ import cartReducer from './cartReducer';
 import favReducer from './favReducer';
 import orderReducer from './orderReducer';
 import detReducer from './detReducer';
+import searchReducer from './searchReducer';
 
 const rootReducer = combineReducers({
   customer: customerReducer,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   order: orderReducer,
   favourite: favReducer,
   details: detReducer,
+  search: searchReducer,
 });
 
 export default rootReducer;

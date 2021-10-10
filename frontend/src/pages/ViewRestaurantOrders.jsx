@@ -76,8 +76,6 @@ export default function ViewRestaurantOrders() {
               setOrders(data.data.restaurantOrders)
             }).catch(error=>console.log(error))
         }).catch(error=>console.log(error))
-
-      
     }, [newOrderStatus])
 
     const viewProfileHandler = async(custId)=>{

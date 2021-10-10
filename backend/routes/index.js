@@ -50,6 +50,7 @@ router.delete(
   '/customers/:custId',
   customerController.deleteCustomer,
 );
+
 // Restaurant routes
 router.get('/restaurants', restaurantController.getRestaurants);
 router.get(
@@ -65,8 +66,10 @@ router.delete(
   restaurantController.deleteRestaurant,
 );
 router.get('/customers/city/:city', customerController.getAllCustomerRestaurants);
-// router.get('/restaurants/search/:searchquery', restaurantController.searchRestaurant);
-
+router.get(
+  '/restaurants/search/:searchquery',
+  restaurantController.searchRestaurants,
+);
 
 // Restaurant Dishes routes
 router.post(

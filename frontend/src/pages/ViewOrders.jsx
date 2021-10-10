@@ -12,6 +12,10 @@ import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import jwt_decode from 'jwt-decode';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 const useStyles = makeStyles((theme)=>({
   container:{
@@ -30,6 +34,8 @@ const useStyles = makeStyles((theme)=>({
 export default function ViewOrders() {
     const classes = useStyles()
     const [orders, setOrders] = useState([])
+    const [displayOrders, setDisplayOrders] = useState([]) 
+    const [filteredOrders, setFilteredOrders] = useState([]) 
     const [restaurantNames, setRestaurantNames] = useState({})
     const [openReceipt, setOpenReceipt] = React.useState(false);
     const [selectedOrder, setSelectedOrder] = useState({})
@@ -41,6 +47,10 @@ export default function ViewOrders() {
     }
     console.log(restaurantNames)
     var restNames = {}
+
+    useEffect(() => {
+      setDisplayOrders(filteredOrders)
+    }, [filteredOrders])
 
     useEffect(async ()=> {
         try {
@@ -76,9 +86,46 @@ export default function ViewOrders() {
       <div className={classes.container}>
 
       <Typography  component="div" variant="h4">Past Orders</Typography>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Orders</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              // value="Preparing"
+              label="Orders"
+              onChange={(e)=>{
+                console.log(e.target.value)
+                if(e.target.value=="Placed"){
+                  let curorders = orders.filter(order=> { return order.orderStatus=="Placed"})
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+                else if(e.target.value=="Preparing"){
+                  let curorders = orders.filter(order=> {order.orderStatus=="Pickup up"})
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+                else if(e.target.value=="Delivered"){
+                  let curorders = orders.filter(order=> { return order.orderStatus=="Delivered"|| order.orderStatus=="Pickup up"})
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+                else if(e.target.value=="Cancelled"){
+                  let curorders = orders.filter(order=>order.orderStatus=="Cancelled")
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+              }}
+            >
+              <MenuItem value="Preparing">Preparing</MenuItem>
+              <MenuItem value="Placed">Placed</MenuItem>
+              <MenuItem value="Deliverd">Delivered</MenuItem>
+              <MenuItem value="Cancelled">Cancelled</MenuItem>
+            </Select>
+          </FormControl>
 
       <div className={classes.Orders}>
-            {orders.length>0 && orders.map(order=>  { 
+            {displayOrders.length>0 && displayOrders.map(order=>  { 
               return <div style={{ border: "none", borderBottom: "1px dotted black" }}>{restaurantNames[order.restId]}<br/>
                       {order.orderDishes.length} items for ${order.totalPrice} . {order.orderPlacedTime.split('T')[0]} at {order.orderPlacedTime.split('T')[1].split(':')[0]}:{order.orderPlacedTime.split('T')[1].split(':')[0]} .  
                       <Link

@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
-import { getRestaurantData, getCustomerData } from '../functions/backendapicalls';
+import { getRestaurantData, getCustomerData, getSearchData } from '../functions/backendapicalls';
 import { Button, SHAPE, SIZE } from 'baseui/button';
 import { RadioGroup, Radio, ALIGN } from 'baseui/radio';
 import { Card, StyledBody } from 'baseui/card';
@@ -42,6 +42,7 @@ function CustomerDashboard() {
   const dispatch = useDispatch()
   const token = sessionStorage.getItem('token');
   var custId = null;
+  const searchState = useSelector(state=>state.search)
   if(token){
   const decoded = jwt_decode(token);
      custId = decoded.id;
@@ -60,6 +61,20 @@ function CustomerDashboard() {
   useEffect(() => {
     setDisplayRestaurants(filteredrestaurants)
   }, [filteredrestaurants])
+
+  useEffect(() => {
+    console.log('im in search useffect '+ searchState)
+    console.log(searchState)
+    // console.log(searchState.searchquery)
+    if(searchState){
+    getSearchData(searchState)
+      .then((res) => {
+          // setDisplayRestaurants()
+          setFilteredRestaurants(res.data.rest)
+          // console.log(res.data.rest)
+        })
+    .catch((err) => console.log(err));}
+  }, [searchState])
 
   const loadCustomerDetails = (callback) => {
     console.log('load cust details')
