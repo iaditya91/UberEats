@@ -182,7 +182,7 @@ export default function ViewRestaurantOrders() {
         <DialogTitle id="customized-dialog-title" onClose={handleProfileClose}>
           Customer Profile
         </DialogTitle>
-        <IconButton style={{marginLeft:"auto"}}onClick={handleProfileClose}><CloseIcon /></IconButton></div>
+        <IconButton style={{marginLeft:"auto"}} onClick={handleProfileClose}><CloseIcon /></IconButton></div>
         <DialogContent dividers>
           <CardMedia
                                 component="img"

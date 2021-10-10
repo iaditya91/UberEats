@@ -6,16 +6,22 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import {Grid} from '@material-ui/core';
 import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import axiosInstance from '../config/axiosConfig';
 import RestaurantHome from '../images/RestaurantHome.jpg'
 import { useSelector, useDispatch } from 'react-redux';
-import {createCart, addDishToCart} from '../reducers/actions/cartActions'
+import {createCart, addDishToCart, addRestaurantDetailsToCart, resetCart} from '../reducers/actions/cartActions'
 import jwt_decode from 'jwt-decode';
 import { useParams } from 'react-router';
 import { setRestaurantDetails } from '../reducers/actions/detActions';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 
 
@@ -39,6 +45,7 @@ export default function RestaurantMain(){
     const [dishes,setDishes] = useState({})
     const [restaurant, setRestaurant] = useState({})
     const cartState = useSelector(state=> state.cart)
+    const [openWarning, setOpenWarning] = React.useState(false);
     
     var custId = 1;
     if(token){
@@ -48,13 +55,26 @@ export default function RestaurantMain(){
     
     // localStorage.setItem('dishes',dishes)
 
+    const handleWarningClose = () => {
+        setOpenWarning(false);
+      };
+
     const cardOnClickHandler = async (name)=>{
         console.log('card clicked!');
         //const dishes = localStorage.getItem(dishes);
         console.log(name);
         
         try {
-            dispatch(addDishToCart({dishId: name}))
+            if(JSON.stringify(cartState.restaurant)==='{}'){
+                dispatch(addRestaurantDetailsToCart({restaurant}))
+                dispatch(addDishToCart({dishId: name, quantity:1}))
+            }
+            else if(cartState.restaurant.restId==restaurant.restId){
+                dispatch(addDishToCart({dishId: name, quantity:1}))
+            }
+            else{
+                setOpenWarning(true)
+            }
             // const response = await axiosInstance.post(`/customers/${restId}/cart`, {restId:1, dishId:name.dishId});
             // setRestaurant(response.data.rest)
             console.log(cartState)
@@ -126,6 +146,30 @@ export default function RestaurantMain(){
 
             })}
         </div>
+
+        <Dialog
+        onClose={handleWarningClose}
+        aria-labelledby="customized-dialog-title"
+        open={openWarning}>
+          <div style={{display:"flex", flexDirection:"row"}}>
+        <DialogTitle id="customized-dialog-title" onClose={handleWarningClose}>
+          Create new order?
+        </DialogTitle>
+        <IconButton style={{marginLeft:"auto"}} onClick={handleWarningClose}><CloseIcon /></IconButton></div>
+        <DialogContent dividers>
+        <Typography gutterBottom>
+            Your order contains items from {cartState.restaurant.name}. Create a new order to add items from {restaurant.name}.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+        <Button varient='contained' 
+            onClick={(e)=>{
+                e.preventDefault()
+                dispatch(resetCart())
+                handleWarningClose()
+        }} style={{backgroundColor:"black", color:"white"}}>New Order</Button>
+        </DialogActions>
+      </Dialog>
        </div>
     )
 }

@@ -87,7 +87,7 @@ export default function OrderCheckout(){
     var totalSum = 0
     if(cartState.dishes.length>0){
         cartState.dishes.map(dish=>{
-            totalSum = totalSum +dish.dishPrice
+            totalSum = totalSum +dish.dish.dishPrice
         })
     }
     totalSum = Math.round(totalSum*100)/100
@@ -125,14 +125,14 @@ export default function OrderCheckout(){
             <div className={classes.column1}>
                     <Typography component="div" variant="h4">
                     {/* {cartState.dishes[0].restId} */}
-                        {(cartState.dishes.length>0 && cartState.dishes[0].restId)&&<div>Restaurant Name: {detState.restaurant.name} </div> }
+                        {(cartState.dishes.length>0)&&<div>Restaurant Name: {detState.restaurant.name} </div> }
                      </Typography>
                      <Typography component="div" variant="h6">
                         Your Items
                      </Typography>
                      {cartState.dishes.map(dish=>{
                         return(<Typography sx={{fontWeight:"bold"}} component="div" variant="subtitle1">
-                            {dish.name} Price: {dish.dishPrice}$
+                            {dish.quantity} {dish.dish.name} (Price: {dish.dish.dishPrice * dish.quantity}$)
                             </Typography>)
                      }
                     )}

@@ -15,6 +15,7 @@ import { logoutRestaurant } from '../reducers/actions/restaurant';
 import { setSearchQuery } from '../reducers/actions/searchAction'
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import { updateDishQuantity} from '../reducers/actions/cartActions'
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -105,7 +106,7 @@ export default function AppBarPrimary() {
           {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/customer/update')}>Update Profile</Nav.Link>}
           {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/viewOrders')}>View Orders</Nav.Link>}
           {(Resttoken.token)&&<Nav.Link onClick={()=>hist.push('/viewRestaurantOrders')}>View Orders</Nav.Link>}
-          {(Custtoken.token)&&<Nav.Link onClick={handleClickOpenCart}>Cart</Nav.Link>}
+          {(Custtoken.token)&&<Nav.Link onClick={handleClickOpenCart} style={{background:"black",borderRadius:"20px",color:"white",width:"60px"}}>Cart {cartState.dishes.length}</Nav.Link>}
           <Dialog
               open={openCart}
               onClose={handleCloseCart}
@@ -122,10 +123,20 @@ export default function AppBarPrimary() {
                             return (
                                <div>
                                 <Typography component="div" variant="h6">
-                                   {item.name}
+                                   {item.dish.name} 
                                 </Typography>
                                 <Typography component="div" variant="subtitle1">
-                                  Price: {item.dishPrice} $
+                                  Price: {item.dish.dishPrice * item.quantity} $   
+                                 <button onClick={(e)=>{
+                                   e.preventDefault()
+                                   console.log('-')
+                                   dispatch(updateDishQuantity({dishId: item.dish, quantity:item.quantity-1}))
+                                   }}>-</button> {item.quantity}
+                                   <button onClick={(e)=>{
+                                     e.preventDefault()
+                                     console.log('+')
+                                     dispatch(updateDishQuantity({dishId: item.dish, quantity:item.quantity+1}))
+                                     }}>+</button>
                              </Typography>
                                </div>
                             )
