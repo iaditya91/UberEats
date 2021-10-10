@@ -105,12 +105,16 @@ export default function RestaurantAdmin(){
     }
     const updateMenuHandler = async (event)=>{
         event.preventDefault();
-        // const token = sessionStorage.getItem('token');
-        // const decoded = jwt_decode(token);
-        // const restId = decoded.id;
         const dishId = dishes.filter(dish=>dish.name===updateDish.name)[0].dishId;
         
+        
+        for (var propName in updateDish) {
+            if (updateDish[propName] === '' || updateDish[propName] === undefined) {
+              delete updateDish[propName];
+            }
+          }
         console.log(updateDish);
+
         try {
             const response = await axiosInstance.put(`/restaurants/${restId}/dishes/${dishId}`, updateDish);
             console.log(response);
@@ -127,9 +131,6 @@ export default function RestaurantAdmin(){
     const addMenuHandler = async (event)=>{
         event.preventDefault();
         console.log(addDish)
-        // const token = sessionStorage.getItem('token');
-        // const decoded = jwt_decode(token);
-        // const restId = decoded.id;
         try {
             const response = await axiosInstance.post(`/restaurants/${restId}/dishes`, addDish);
             console.log(response);

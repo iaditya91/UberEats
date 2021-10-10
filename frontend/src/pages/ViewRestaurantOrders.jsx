@@ -124,7 +124,12 @@ export default function ViewRestaurantOrders() {
                 console.log(e.target.value)
                 // if(orders){
                 if(e.target.value=="Placed"){
-                  let curorders = orders.filter(order=> { return order.orderStatus=="Placed"|| order.orderStatus=="Preparing"})
+                  let curorders = orders.filter(order=> order.orderStatus=="Placed")
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+                else if(e.target.value=="Preparing"){
+                  let curorders = orders.filter(order=> order.orderStatus=="Preparing")
                   console.log(curorders)
                   setFilteredOrders(curorders)
                 }
@@ -144,6 +149,7 @@ export default function ViewRestaurantOrders() {
               name="radio-buttons-group"
             >
               <FormControlLabel value="Placed" control={<Radio />} label="New Orders" />
+              <FormControlLabel value="Preparing" control={<Radio />} label="Preparing" />
               <FormControlLabel value="Delivered" control={<Radio />} label="Delivered Orders" />
               <FormControlLabel value="Cancelled" control={<Radio />} label="Canceled Orders" />
             </RadioGroup>

@@ -78,7 +78,7 @@ export default function AppBarPrimary() {
       <List>
      
         <ListItemButton onClick={()=>hist.push('/login/restaurant')}><h6>Restaurant Login</h6></ListItemButton>
-        <ListItemButton onClick={()=>hist.push('/login/restaurant')}><h6>Register Your Restaurant</h6></ListItemButton>
+        <ListItemButton onClick={()=>hist.push('/register/restaurant')}><h6>Register Your Restaurant</h6></ListItemButton>
         
       </List>
     </Drawer>
