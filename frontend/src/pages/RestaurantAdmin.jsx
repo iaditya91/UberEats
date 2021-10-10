@@ -249,6 +249,17 @@ export default function RestaurantAdmin(){
                                             />
                                             <TextField
                                                 select
+                                                name="dishType"
+                                                id="category-select"
+                                                value={updateDish.dishType}
+                                                label="Dish Type"
+                                                onChange={handleUpdateMenuChange}>
+                                                <MenuItem value={"Veg"}>Veg</MenuItem>
+                                                <MenuItem value={"NonVeg"}>NonVeg</MenuItem>
+                                                <MenuItem value={"Vegan"}>Vegan</MenuItem>
+                                            </TextField>
+                                            <TextField
+                                                select
                                                 name="category"
                                                 id="category-select"
                                                 value={updateDish.category}
@@ -313,6 +324,17 @@ export default function RestaurantAdmin(){
                                                 placeholder="Restaurant Image"
                                                 autoFocus
                                             />
+                                            <TextField
+                                                select
+                                                name="dishType"
+                                                id="category-select"
+                                                value={addDish.dishType}
+                                                label="Dish Type"
+                                                onChange={handleAddMenuChange}>
+                                                <MenuItem value={"Veg"}>Veg</MenuItem>
+                                                <MenuItem value={"NonVeg"}>NonVeg</MenuItem>
+                                                <MenuItem value={"Vegan"}>Vegan</MenuItem>
+                                            </TextField>
                                             <TextField
                                                 select
                                                 name="category"

@@ -44,6 +44,7 @@ export default function RestaurantMain(){
     const [dishes,setDishes] = useState({})
     const [restaurant, setRestaurant] = useState({})
     const cartState = useSelector(state=> state.cart)
+    const [warningDish, setWarningDish] = useState({})
     const [openWarning, setOpenWarning] = React.useState(false);
     
     var custId = 1;
@@ -71,6 +72,7 @@ export default function RestaurantMain(){
                 dispatch(addDishToCart({dishId: name, quantity:1}))
             }
             else{
+                setWarningDish(name)
                 setOpenWarning(true)
             }
             console.log(cartState)
@@ -161,7 +163,13 @@ export default function RestaurantMain(){
         <Button varient='contained' 
             onClick={(e)=>{
                 e.preventDefault()
+                handleWarningClose()
+        }} style={{backgroundColor:"black", color:"white"}}>Cancel</Button>
+        <Button varient='contained' 
+            onClick={(e)=>{
+                e.preventDefault()
                 dispatch(resetCart())
+                dispatch(addDishToCart({dishId: warningDish, quantity:1}))
                 handleWarningClose()
         }} style={{backgroundColor:"black", color:"white"}}>New Order</Button>
         </DialogActions>

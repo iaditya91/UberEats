@@ -71,6 +71,8 @@ export default function ViewOrders() {
     const viewReciptHandler = (orderId)=>{
       console.log('view recipt handler')
       const curorder = orders.filter(order=>order.orderId ==orderId)
+      console.log(orders)
+      console.log(curorder)
       setOpenReceipt(true)
       setSelectedOrder(curorder[0])
     }

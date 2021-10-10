@@ -17,6 +17,7 @@ import TextField from '@mui/material/TextField';
 import {setDelivaryAddress} from "../reducers/actions/orderActions"
 import { useHistory } from 'react-router';
 import Dialog from '@mui/material/Dialog';
+import jwt_decode from 'jwt-decode';
 import {resetCart} from '../reducers/actions/cartActions'
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -51,13 +52,19 @@ export default function OrderCheckout(){
     const [newAddress, setNewAddress] = useState()
     const [selectedAddress, setSelectedAddress] = useState()
     const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false);
+    var custId = null;
+    const token = sessionStorage.getItem('token');
+    if(token){
+        const decoded = jwt_decode(token);
+        custId = decoded.id;
+    }
 
     const handleSuccessMsgClose = () => {
         hist.push('/')
         setOpenSuccessMsg(false);
       };
 
-    const custId = cartState.custId
+    // const custId = cartState.custId
     // console.log(detState.rest)
 
     useEffect(async ()=> {
@@ -78,6 +85,11 @@ export default function OrderCheckout(){
 
     const placeOrderHandler = async ()=>{
         console.log("Placeorder clicked")
+        let dishes = []
+        for(let i =0;i<cartState.dishes.length;i++){
+            dishes.push(cartState.dishes[i].dish)
+        }
+        // console.log(dishes)
 
         const orderObj ={
             orderType:"Delivery",
@@ -85,7 +97,7 @@ export default function OrderCheckout(){
             taxPrice: tax,
             totalPrice: total,
             orderAddress: selectedAddress[0].address,
-            cartItems: cartState.dishes
+            cartItems: dishes
         }
         try {
             const response = await axiosInstance.post(`/customers/${custId}/orders/init`, orderObj);
