@@ -189,9 +189,20 @@ export default function RestaurantAdmin(){
             <div>
             <Typography variant="subtitle1" color="text.secondary" component="div">
             <img style={{width:"100%" ,height:300}} src={restaurant.profileImg} alt="This is image of restaurant"/>
-                <div style={{position:"absolute",right:"16px" ,top:"70px"}}>
-                   <button onClick={updateRestaurantHandler}>Update Restaurant</button>
-                   <button onClick={handleClickOpenUpdateMenu}>Update Menu</button>
+                {/* <div style={{position:"absolute",right:"16px" ,top:"70px"}}> */}
+                   
+                <br/>
+                {restaurant.name}<br/>
+                Address: {restaurant.address}<br/>
+                Description: {restaurant.description}<br/>
+                 </Typography>         
+            
+        </div>
+        <br/><br/>
+        <Typography variant="h3" color="text.secondary" component="div">Menu</Typography>
+        <div style={{marginTop: "20px", marginLeft:"20px", display:"grid", columnGap:"10px", gridTemplateColumns:"repeat(auto-fill,150px)", gridTemplateRows:"50px"}}>
+        <Button variant="contained" style={{backgroundColor:"grey"}} onClick={updateRestaurantHandler}>Update Restaurant</Button>
+                   <Button variant="contained" style={{backgroundColor:"grey"}} onClick={handleClickOpenUpdateMenu}>Update Menu</Button>
                         <Dialog
                             open={openUpdateMenu}
                             onClose={handleCloseUpdateMenu}
@@ -244,9 +255,11 @@ export default function RestaurantAdmin(){
                                                 label="Category"
                                                 onChange={handleUpdateMenuChange}
                                             >
-                                                <MenuItem value={"Veg"}>Veg</MenuItem>
-                                                <MenuItem value={"Non-veg"}>NonVeg</MenuItem>
-                                                <MenuItem value={"Vegan"}>Vegan</MenuItem>
+                                                <MenuItem value={"Appetizer"}>Appetizer</MenuItem>
+                                                <MenuItem value={"Salads"}>Salads</MenuItem>
+                                                <MenuItem value={"Main Course"}>Main Course</MenuItem>
+                                                <MenuItem value={"Desserts"}>Desserts</MenuItem>
+                                                <MenuItem value={"Beverages"}>Beverages</MenuItem>
                                             </TextField>
                                         </div>
                                         <Button variant="contained" onClick={updateMenuHandler}>Update Menu</Button>
@@ -256,7 +269,7 @@ export default function RestaurantAdmin(){
                         </DialogContent>
                         </Dialog>
 
-                    <button onClick={handleClickOpenAddMenu}>Add Menu</button>
+                    <Button variant="contained" style={{backgroundColor:"grey"}} onClick={handleClickOpenAddMenu}>Add Menu</Button>
                     <Dialog
                             open={openAddMenu}
                             onClose={handleCloseAddMenu}
@@ -307,9 +320,11 @@ export default function RestaurantAdmin(){
                                                 value={addDish.category}
                                                 label="Category"
                                                 onChange={handleAddMenuChange}>
-                                                <MenuItem value={"Veg"}>Veg</MenuItem>
-                                                <MenuItem value={"Non-veg"}>NonVeg</MenuItem>
-                                                <MenuItem value={"Vegan"}>Vegan</MenuItem>
+                                                <MenuItem value={"Appetizer"}>Appetizer</MenuItem>
+                                                <MenuItem value={"Salads"}>Salads</MenuItem>
+                                                <MenuItem value={"Main Course"}>Main Course</MenuItem>
+                                                <MenuItem value={"Desserts"}>Desserts</MenuItem>
+                                                <MenuItem value={"Beverages"}>Beverages</MenuItem>
                                             </TextField>
                                         </div>
                                         <Button variant="contained" onClick={addMenuHandler}>Add Menu</Button>
@@ -320,7 +335,7 @@ export default function RestaurantAdmin(){
                         </Dialog>
 
 
-                    <button onClick={handleClickOpenDeleteMenu}>Delete Menu</button>
+                        <Button variant="contained" onClick={handleClickOpenDeleteMenu} style={{backgroundColor:"grey"}}>Delete Menu</Button>
                     <Dialog
                             open={openDeleteMenu}
                             onClose={handleCloseDeleteMenu}
@@ -351,16 +366,7 @@ export default function RestaurantAdmin(){
                         </DialogContent>
                         </Dialog>
                 </div>
-                <br/>
-                {restaurant.name}<br/>
-                Address: {restaurant.address}<br/>
-                Description: {restaurant.description}<br/>
-                 </Typography>         
-            
-        </div>
-        <br/><br/>
-        <Typography variant="h3" color="text.secondary" component="div">Menu</Typography>
-        <div>
+        <div style={{marginTop: "20px"}}>
             {dishCardshtml} 
         </div>
        </div>

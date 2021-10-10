@@ -17,6 +17,7 @@ import TextField from '@mui/material/TextField';
 import {setDelivaryAddress} from "../reducers/actions/orderActions"
 import { useHistory } from 'react-router';
 import Dialog from '@mui/material/Dialog';
+import {resetCart} from '../reducers/actions/cartActions'
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
@@ -136,7 +137,7 @@ export default function OrderCheckout(){
             <div className={classes.column1}>
                     <Typography component="div" variant="h4">
                     {/* {cartState.dishes[0].restId} */}
-                        {(cartState.dishes.length>0)&&<div>Restaurant Name: {detState.restaurant.name} </div> }
+                        {(cartState.dishes.length>0)&&<div>Restaurant Name: {cartState.restaurant.name} </div> }
                      </Typography>
                      <Typography component="div" variant="h6">
                         Your Items
@@ -202,6 +203,7 @@ export default function OrderCheckout(){
                 <Button varient='contained' 
                     onClick={(e)=>{
                         e.preventDefault()
+                        dispatch(resetCart())
                         handleSuccessMsgClose()
                 }} style={{backgroundColor:"black", color:"white"}}>Go To Home</Button>
                 </DialogActions>

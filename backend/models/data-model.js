@@ -212,7 +212,7 @@ const dish = sequelize.define('dish', {
   },
   category: {
     type: Sequelize.ENUM,
-    values: ['Veg', 'Non-veg', 'Vegan'],
+    values: ['Appetizer', 'Salads,', 'Main Course','Desserts','Beverages'],
   },
 });
 
