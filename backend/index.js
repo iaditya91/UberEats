@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
+const backendUrl = '3.15.5.174'
 
 app.use(cors());
 
@@ -24,7 +25,7 @@ try {
   sequelize.sync().then(() => {
     const PORT = 4000;
     app
-      .listen(PORT, () => {
+      .listen(PORT,backendUrl ,() => {
         console.log('Server running on 4000');
       })
       .on('error', (err) => {
