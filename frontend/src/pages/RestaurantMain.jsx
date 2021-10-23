@@ -90,6 +90,7 @@ export default function RestaurantMain(){
 
     useEffect(async ()=> {
             try {
+                console.log(restId)
                 const response = await axiosInstance.get(`/restaurants/${restId}`);
                 setRestaurant(response.data.rest)
                 dispatch(createCart({custId}))

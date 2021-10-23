@@ -80,7 +80,7 @@ function RestaurantUpdate() {
     };
     const token = sessionStorage.getItem('token');
     const decoded = jwt_decode(token);
-    console.log(token);
+    console.log(decoded);
     try {
       const response = await axiosInstance.put(`restaurants/${decoded.id}`, customerObj, {
         headers: { Authorization: token },

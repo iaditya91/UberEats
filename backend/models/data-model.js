@@ -49,9 +49,9 @@ const restaurant = mongoose.model('restaurant', Schema({
   country: {type: String},
   address: {type: String},
   description: {type: String},
-  profileImg: {type: Date},
-  startTime: {type: String},
-  endTime: {type: String},
+  profileImg: {type: String},
+  startTime: {type: Date},
+  endTime: {type: Date},
   deliveryType: {
     type: String,
     enum : ['Pickup', 'Delivery'],

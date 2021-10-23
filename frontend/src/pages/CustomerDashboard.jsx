@@ -170,7 +170,7 @@ function CustomerDashboard() {
                     <Card key={res.restId}  className={classes.card}
                       title={res.name}>
                         <div >
-                      <img  style= {{ width: '280px' , height:'200px'}} onClick={()=>{hist.push(`/restaurantMain/${res.restId}`)}} src={res.profileImg}/>
+                      <img  style= {{ width: '280px' , height:'200px'}} onClick={()=>{hist.push(`/restaurantMain/${res._id}`)}} src={res.profileImg}/>
                       <StyledBody
                           className={classes.overlay}
                       ><IconButton varient="contained" onClick={()=>{

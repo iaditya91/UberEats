@@ -52,7 +52,7 @@ const loginCustomer = async (req, res) => {
         return res.status(401).json({ error: 'Invalid password!' });
       }
       const token = generateAccessToken(
-        existingCustomer.custId,
+        existingCustomer._id,
         'customer',
       );
       return res
@@ -117,6 +117,7 @@ const addCustomerAddress = async (req, res) => {
     //   return res.status(401).json({ error: 'Unauthorized request!' });
     // }
     const { address } = req.body;
+    
     if (!address) {
       return res.status(400).json({ error: 'Please enter address!' });
     }
@@ -124,13 +125,17 @@ const addCustomerAddress = async (req, res) => {
       custId: custId,
       address,
     });
+    console.log(address,0)
+    console.log(checkExistingAddress)
+    if(checkExistingAddress){
     if (checkExistingAddress.address === address) {
       return res
         .status(409)
         .json({ error: 'Address already exists!' });
-    }
+    }}
+    console.log(address,1)
     const cust = await customerAddress.create({
-      custId: _id,
+      custId,
       address,
     });
     return res

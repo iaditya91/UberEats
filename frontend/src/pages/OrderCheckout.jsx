@@ -52,11 +52,13 @@ export default function OrderCheckout(){
     const [newAddress, setNewAddress] = useState()
     const [selectedAddress, setSelectedAddress] = useState()
     const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false);
+    console.log(orderState)
     var custId = null;
     const token = sessionStorage.getItem('token');
     if(token){
         const decoded = jwt_decode(token);
         custId = decoded.id;
+        console.log(decoded)
     }
 
     const handleSuccessMsgClose = () => {
@@ -134,9 +136,10 @@ export default function OrderCheckout(){
     }};
 
     const delivaryOnSelectHandler =(event)=>{
+        console.log(event.target)
         const {name, value} = event.target
         // console.log(event.target.value)
-        const addr = orderState.filter(order=>order.id==event.target.value)
+        const addr = orderState.filter(order=>order._id==event.target.value)
         console.log('addr')
         console.log(addr)
         setSelectedAddress(addr)
@@ -168,10 +171,10 @@ export default function OrderCheckout(){
                         onChange={delivaryOnSelectHandler}
                         aria-label="delivary address"
                         name="radio-buttons-group"
-                    //   value={selectedAddress}
+                        // value={selectedAddress}
                     >
                       {orderState.length>0 && orderState.map(del_address=>{
-                            return(<FormControlLabel key={del_address.id}  sx={{fontWeight:"bold"}} value={del_address.id}  control={<Radio />} label={del_address.address}/>)
+                            return(<FormControlLabel key={del_address._id}  sx={{fontWeight:"bold"}} value={del_address._id}  control={<Radio />} label={del_address.address}/>)
                         })}
                     </RadioGroup>
                     

@@ -105,7 +105,8 @@ export default function RestaurantAdmin(){
     }
     const updateMenuHandler = async (event)=>{
         event.preventDefault();
-        const dishId = dishes.filter(dish=>dish.name===updateDish.name)[0].dishId;
+        console.log(updateDish)
+        const dishId = dishes.filter(dish=>dish.name===updateDish.name)[0]._id;
         
         
         for (var propName in updateDish) {
@@ -177,6 +178,7 @@ export default function RestaurantAdmin(){
                 // const token = sessionStorage.getItem('token');
                 // const decoded = jwt_decode(token);
                 // const restId = decoded.id;
+                console.log(restId)
                 const response = await axiosInstance.get(`/restaurants/${restId}`);
                 setRestaurant(response.data.rest)
             } catch (error) {
@@ -243,7 +245,7 @@ export default function RestaurantAdmin(){
                                                 name=""
                                                 onChange={(e) => {
                                                   uploadFile(e.target.files[0], awsConf).then((data)=>{
-                                                    setAddDish({...updateDish, dishImg: data.location})}).catch(error=>{console.log(error)})
+                                                    setUpdateDish({...updateDish, dishImg: data.location})}).catch(error=>{console.log(error)})
                                                   }}
                                                 placeholder="Restaurant Image"
                                                 autoFocus
