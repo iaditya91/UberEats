@@ -112,13 +112,13 @@ router.post(
   '/customers/:custId/orders/init',
   orderController.initOrder,
 );
-router.post(
-  '/customers/:custId/orders/create',
-  orderValidationRules(),
-  validate,
-  orderController.createOrder,
-);
-router.get('/customers/:custId/latestOrder', orderController.getLatestOrder);
+// router.post(
+//   '/customers/:custId/orders/create',
+//   orderValidationRules(),
+//   validate,
+//   orderController.createOrder,
+// );
+// router.get('/customers/:custId/latestOrder', orderController.getLatestOrder);
 router.get(
   '/customers/:custId/orders/:orderId',
   orderController.getOrderDetailsById,

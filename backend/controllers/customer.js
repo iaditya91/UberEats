@@ -91,7 +91,8 @@ const updateCustomer = async (req, res) => {
     // if (String(req.headers.id) !== String(custId)) {
     //   return res.status(401).json({ error: 'Unauthorized request!' });
     // }
-    const updated = await customer.updateMany(
+    req.body.passwd = await bcrypt.hash(req.body.passwd, 12);
+    const updated = await customer.updateOne(
        { _id:custId },{$set:req.body}
     );
     console.log(custId)

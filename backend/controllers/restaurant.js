@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+var objectId = require('mongodb').ObjectId;
 // const { getPaiganation } = require('u-server-utils');
 const { generateAccessToken } = require('../middleware/validateToken');
 const { restaurant, dish } = require('../models/data-model');
@@ -8,9 +9,9 @@ const { restaurant, dish } = require('../models/data-model');
 const createRestaurant = async (req, res) => {
   try {
     // Check if email already exists
-    const checkRestaurant = await restaurant.findOne({
-      where: { emailId: req.body.emailId },
-    });
+    const checkRestaurant = await restaurant.findOne(
+      { emailId: req.body.emailId },
+    );
     if (checkRestaurant) {
       return res.status(409).json({
         error: "There's already an account with this email. Please sign in.",
@@ -33,9 +34,9 @@ const loginRestaurant = async (req, res) => {
     if (!emailId || !passwd) {
       return res.status(401).json({ error: 'Please input all fields!' });
     }
-    const existingRest = await restaurant.findOne({
-      where: { emailId },
-    });
+    const existingRest = await restaurant.findOne(
+       { emailId },
+    );
     if (!existingRest) {
       return res.status(404).json({ error: 'Email not found! Please register!' });
     }
@@ -58,9 +59,9 @@ const getRestaurant = async (req, res) => {
   try {
     const { restId } = req.params;
     //if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
-    const rest = await restaurant.findOne({
-      where: { restId },
-    });
+    const rest = await restaurant.findOne(
+       { _id: restId },
+    );
     if (rest) {
       return res.status(200).json({ rest });
     }
@@ -70,13 +71,13 @@ const getRestaurant = async (req, res) => {
   }
 };
 
-// const { Op } = require("sequelize");
+
 const searchRestaurants = async (req, res) => {
   try {
     const { searchquery } = req.params;
-    const rest = await restaurant.findAll({
-      where: { city: searchquery },
-    });
+    const rest = await restaurant.find(
+      { city: searchquery },
+    );
 
     if (rest) {
       return res.status(200).json({ rest });
@@ -91,12 +92,13 @@ const updateRestaurant = async (req, res) => {
   try {
     const { restId } = req.params;
     console.log(restId+' matches with '+ req.headers.id)
+    req.body.passwd = await bcrypt.hash(req.body.passwd, 12);
     // if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
-    const [updated] = await restaurant.update(req.body, {
-      where: { restId },
-    });
+    const updated = await restaurant.updateOne(
+      { _id:restId },{$set:req.body}
+    );
     if (updated) {
-      const updatedRest = await restaurant.findOne({ where: { restId } });
+      const updatedRest = await restaurant.findOne( { _id:restId } );
       return res.status(200).json({ user: updatedRest });
     }
     return res.status(404).json({ error: 'Restaurant not found!' });
@@ -123,7 +125,7 @@ const deleteRestaurant = async (req, res) => {
 const getRestaurants = async (req, res) => {
   try {
     // const { limit, offset } = getPaiganation(req.query.page, req.query.limit);
-    const restaurants = await restaurant.findAll({});
+    const restaurants = await restaurant.find({});
     if (!restaurants) {
       return res.status(200).json({ message: 'No restaurants found!' });
     }
@@ -138,9 +140,9 @@ const createDish = async (req, res) => {
   try {
     const { restId } = req.params;
     // if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
-    const existingDish = await dish.findOne({
-      where: { restId, name: req.body.name },
-    });
+    const existingDish = await dish.findOne(
+       { restId, name: req.body.name },
+    );
     if (existingDish) {
       return res.status(409).json({ error: `Dish ${req.body.name} already exists!` });
     }
@@ -159,7 +161,7 @@ const getRestaurantDishes = async (req, res) => {
   console.log(restId);
   // const { limit, offset } = getPaiganation(req.query.page, req.query.limit);
   try {
-    const dishes = await dish.findAll({ where: { restId } });
+    const dishes = await dish.find( { restId } );
     if (!dishes) return res.status(404).json({ error: 'Restaurant not found!' });
     return res.status(200).json({ dishes });
   } catch (error) {
@@ -170,9 +172,9 @@ const getRestaurantDishes = async (req, res) => {
 const getRestaurantDish = async (req, res) => {
   try {
     const { restId, dishId } = req.params;
-    const existingDish = await dish.findOne({
-      where: { restId, dishId },
-    });
+    const existingDish = await dish.findOne(
+      { restId, dishId }
+    );
     if (existingDish) return res.status(200).json({ existingDish });
     return res.status(404).json({ error: 'Dish not found!' });
   } catch (error) {
@@ -184,11 +186,11 @@ const updateRestaurantDish = async (req, res) => {
   try {
     const { restId, dishId } = req.params;
     // if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
-    const [updated] = await dish.update(req.body, {
-      where: { restId, dishId },
-    });
+    const updated = await dish.updateOne(
+      { _id:dishId, restId },{$set:req.body}
+    );
     if (updated) {
-      const updatedDish = await dish.findOne({ where: { restId, dishId } });
+      const updatedDish = await dish.findOne( { restId, dishId } );
       return res.status(200).json({ user: updatedDish });
     }
     return res.status(404).json({ error: 'Dish not found!' });
@@ -200,9 +202,9 @@ const updateRestaurantDish = async (req, res) => {
 const deleteRestaurantDish = async (req, res) => {
   try {
     const { restId, dishId } = req.params;
-    const deletedDish = await dish.destroy({
-      where: { restId, dishId },
-    });
+    const deletedDish = await dish.deleteOne(
+      { restId, dishId },
+    );
     if (deletedDish) {
       return res.status(200).json({ message: 'Dish deleted successfully!' });
     }

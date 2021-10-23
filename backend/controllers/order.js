@@ -1,7 +1,6 @@
 const {
   cart,
   dish,
-  sequelize,
   order,
   orderDishes,
 } = require('../models/data-model');
@@ -9,8 +8,9 @@ const {
 const initOrder = async (req, res) => {
   try {
     const { custId } = req.params;
-    const {orderType, price, taxPrice, totalPrice, orderAddress, cartItems} = req.body;
+    const {orderType, price, taxPrice, totalPrice, orderAddress, cartItems, cartId} = req.body;
     const { restId } = cartItems[0];
+    console.log(restId);
     const orderPlacedTime = Date.now();
     const orderEntry = await order.create(
       {
@@ -23,6 +23,7 @@ const initOrder = async (req, res) => {
         orderAddress,
         orderPlacedTime,
         orderStatus: 'Placed',
+        cartId
       },
     );
     const latestOrder = await order.findOne({
@@ -40,74 +41,6 @@ const initOrder = async (req, res) => {
     });
     return res.status(200).json({ orderEntry, message: 'Order Placed Successfully!' });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-};
-
-const createOrder = async (req, res) => {
-  const t = await sequelize.transaction();
-  try {
-    const { custId } = req.params;
-    // if (String(req.headers.id) !== String(custId)) {
-    //   return res.status(401).json({ error: 'Unauthorized request!' });
-    // }
-    const { orderType, orderAddress } = req.body;
-    const orderPlacedTime = Date.now();
-    if (!orderType) {
-      return res
-        .status(400)
-        .json({ error: 'Please select order type!' });
-    }
-    if (orderType === 'Delivery' && !orderAddress) {
-      return res
-        .status(400)
-        .json({ error: 'Please enter your address!' });
-    }
-    const latestOrder = await order.findOne({
-      where: { custId },
-      order: [['createdAt', 'DESC']],
-    });
-    const updatedOrder = await order.update(
-      { ...req.body, orderPlacedTime, orderStatus: 'Placed' },
-      {
-        where: { orderId: latestOrder.orderId },
-      },
-      { transaction: t },
-    );
-    const cartItems = await cart.findAll(
-      {
-        attributes: ['dishId'],
-        where: { custId },
-      },
-      { transaction: t },
-    );
-    if (cartItems.length === 0) {
-      return res.status(404).json({ error: 'No items in cart!' });
-    }
-    cartItems.forEach(async (cartItem) => {
-      await orderDishes.create(
-        {
-          dishId: cartItem.dishId,
-          orderId: latestOrder.orderId,
-        },
-        {
-          transaction: t,
-        },
-      );
-    });
-    await cart.destroy(
-      {
-        where: { custId },
-      },
-      { transaction: t },
-    );
-    t.commit();
-    return res.status(200).json({
-      updatedOrder,
-      message: 'Order placed successfully!',
-    });
-  } catch (error) {
-    await t.rollback();
     return res.status(500).json({ error: error.message });
   }
 };
@@ -134,11 +67,11 @@ const getRestaurantOrders = async (req, res) => {
     // if (String(req.headers.id) !== String(restId)) {
     //   return res.status(401).json({ error: 'Unauthorized request!' });
     // }
-    const restaurantOrders = await order.findAll({
-      where: { restId },
-      include: [{ model: orderDishes, include: [{ model: dish }] }],
-      order: [['createdAt', 'DESC']],
-    });
+    const restaurantOrders = await order.find({ restId });
+    console.log(restaurantOrders);
+    // const dishdetails = await orderDishes.find({restaurantOrder["_id"]}).populate();
+    // include: [{ model: orderDishes, include: [{ model: dish }] }],
+    // order: [['createdAt', 'DESC']],
     return res.status(200).json({ restaurantOrders });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -208,7 +141,7 @@ const getOrderDetailsById = async (req, res) => {
 
 module.exports = {
   initOrder,
-  createOrder,
+  // createOrder,
   getLatestOrder,
   updateOrder,
   getRestaurantOrders,
