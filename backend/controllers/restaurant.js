@@ -44,7 +44,8 @@ const loginRestaurant = async (req, res) => {
       if (err) {
         return res.status(401).json({ error: 'Invalid password!' });
       }
-      const token = generateAccessToken(existingRest.restId, 'restaurant');
+      console.log(existingRest)
+      const token = generateAccessToken(existingRest._id, 'restaurant');
       return res.status(200).json({ message: 'Login successful!', token });
     });
   } catch (error) {
@@ -92,13 +93,16 @@ const updateRestaurant = async (req, res) => {
   try {
     const { restId } = req.params;
     console.log(restId+' matches with '+ req.headers.id)
+    if(req.body.passwd){
     req.body.passwd = await bcrypt.hash(req.body.passwd, 12);
+    }
+    // console.log(req.body)
     // if (String(req.headers.id) !== String(restId)) return res.status(401).json({ error: 'Unauthorized request!' });
     const updated = await restaurant.updateOne(
-      { _id:restId },{$set:req.body}
+      { _id:objectId(restId) },{$set:req.body}
     );
     if (updated) {
-      const updatedRest = await restaurant.findOne( { _id:restId } );
+      const updatedRest = await restaurant.findOne( { _id:objectId(restId) } );
       return res.status(200).json({ user: updatedRest });
     }
     return res.status(404).json({ error: 'Restaurant not found!' });
