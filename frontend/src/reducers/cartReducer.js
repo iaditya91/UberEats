@@ -1,12 +1,20 @@
 /* eslint-disable */
 const initialState = {
+    cartId: '',
     custId: '',
     dishes: [],
-    restaurant: {}
+    restaurant: '',
   };
  
  export default function cartReducer(state = initialState, action) {
     switch (action.type) {
+        case 'SET_CART_FROM_DB':
+            return {
+                cartId: action.payload.cartItems._id,
+                custId: action.payload.cartItems.custId._id,
+                dishes: action.payload.cartItems.dishes,
+                restaurant: action.payload.cartItems.restId,
+            }
         case 'CREATE_CART':
             return {
                 ...state,

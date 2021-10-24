@@ -1,4 +1,43 @@
 const { cart, restaurant, dish } = require('../models/data-model');
+var objectId = require('mongodb').ObjectId;
+
+const insertItemsToCart = async (req, res) => {
+  try {
+    const { custId } = req.params;
+    // console.log(req.body)
+    // console.log(req.body.restaurant._id)
+    const existingCustomer = await cart.findOne({custId});
+    if(existingCustomer){
+      await cart.deleteOne({custId})
+    }
+    await cart.create({
+      custId,
+      restId:req.body.restaurant._id,
+      dishes:req.body.dishes
+    });
+  }
+  catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+const viewCart = async (req, res) => {
+  try {
+    const { custId } = req.params;
+    // console.log(custId)
+    // console.log(req.body.restaurant._id)
+    // const cartItems = await cart.findOne({custId:objectId(custId)}).populate("dish","restaurant");
+    const cartItems = await cart.findOne({custId:objectId(custId)}).populate({path:'dishes.dish',model:'dish'}).populate({path:'restId',model:'restaurant'}).populate({path:'custId',model:'customer'});
+    // console.log(cartItems)
+    if (!cartItems) {
+        return res.status(200).json({ message: 'No items in cart!' });
+    }
+    return res.status(200).json({ cartItems });
+  }
+  catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
 
 const insertIntoCart = async (req, res) => {
   try {
@@ -111,24 +150,24 @@ const resetCartWithDifferentRestaurant = async (req, res) => {
   }
 };
 
-const viewCart = async (req, res) => {
-  try {
-    const { custId } = req.params;
-    // if (String(req.headers.id) !== String(custId)) {
-    //   return res.status(401).json({ error: 'Unauthorized request!' });
-    // }
-    const cartItems = await cart.findAll({
-      include: [{ model: dish }],
-      where: { custId },
-    });
-    if (!cartItems) {
-      return res.status(200).json({ message: 'No items in cart!' });
-    }
-    return res.status(200).json({ cartItems });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-};
+// const viewCart = async (req, res) => {
+//   try {
+//     const { custId } = req.params;
+//     // if (String(req.headers.id) !== String(custId)) {
+//     //   return res.status(401).json({ error: 'Unauthorized request!' });
+//     // }
+//     const cartItems = await cart.findAll({
+//       include: [{ model: dish }],
+//       where: { custId },
+//     });
+//     if (!cartItems) {
+//       return res.status(200).json({ message: 'No items in cart!' });
+//     }
+//     return res.status(200).json({ cartItems });
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+// };
 
 const deleteFromCart = async (req, res) => {
   try {
@@ -161,6 +200,7 @@ const deleteFromCart = async (req, res) => {
 };
 
 module.exports = {
+  insertItemsToCart,
   insertIntoCart,
   viewCart,
   deleteFromCart,

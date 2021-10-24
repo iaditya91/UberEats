@@ -8,8 +8,9 @@ const {
 const initOrder = async (req, res) => {
   try {
     const { custId } = req.params;
-    const {orderType, price, taxPrice, totalPrice, orderAddress, cartItems, cartId} = req.body;
-    const { restId } = cartItems[0];
+    console.log(req.body);
+    const {orderType, price,restId, taxPrice, totalPrice, orderAddress, cartId} = req.body;
+    // const { restId } = cartItems[0];
     console.log(restId);
     const orderPlacedTime = Date.now();
     const orderEntry = await order.create(
@@ -26,19 +27,6 @@ const initOrder = async (req, res) => {
         cartId
       },
     );
-    const latestOrder = await order.findOne({
-      where: { custId },
-      order: [['createdAt', 'DESC']],
-    });
-    console.log(cartItems)
-    cartItems.forEach(async (cartItem) => {
-      await orderDishes.create(
-        {
-          orderId: orderEntry.orderId,
-          dishId: cartItem.dishId,  
-        },
-      );
-    });
     return res.status(200).json({ orderEntry, message: 'Order Placed Successfully!' });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -67,7 +55,7 @@ const getRestaurantOrders = async (req, res) => {
     // if (String(req.headers.id) !== String(restId)) {
     //   return res.status(401).json({ error: 'Unauthorized request!' });
     // }
-    const restaurantOrders = await order.find({ restId });
+    const restaurantOrders = await order.find({ restId }).populate({path:'restId',model:'restaurant'}).populate({path:'custId',model:'customer'}).populate({path:'cartId',model:'cart',populate:{path:'dishes.dish', model:'dish'}});
     console.log(restaurantOrders);
     // const dishdetails = await orderDishes.find({restaurantOrder["_id"]}).populate();
     // include: [{ model: orderDishes, include: [{ model: dish }] }],

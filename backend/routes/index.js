@@ -96,11 +96,12 @@ router.delete(
 );
 
 // Cart routes
-router.post('/customers/:custId/cart', cartController.insertIntoCart);
-router.post(
-  '/customers/:custId/reset-cart',
-  cartController.resetCartWithDifferentRestaurant,
-);
+router.post('/customers/:custId/cart', cartController.insertItemsToCart);
+// router.post('/customers/:custId/cart', cartController.insertIntoCart);
+// router.post(
+//   '/customers/:custId/reset-cart',
+//   cartController.resetCartWithDifferentRestaurant,
+// );
 router.get('/customers/:custId/cart', cartController.viewCart);
 router.delete(
   '/customers/:custId/cart/:dishId',

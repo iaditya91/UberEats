@@ -18,7 +18,7 @@ import {setDelivaryAddress} from "../reducers/actions/orderActions"
 import { useHistory } from 'react-router';
 import Dialog from '@mui/material/Dialog';
 import jwt_decode from 'jwt-decode';
-import {resetCart} from '../reducers/actions/cartActions'
+import {resetCart, setCartReduxFromDB} from '../reducers/actions/cartActions'
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
@@ -44,6 +44,7 @@ const useStyles = makeStyles(theme=>({
 export default function OrderCheckout(){
     const hist = useHistory()
     const cartState = useSelector(state=>state.cart)
+    // const [curCartState,setCurCartState] = useState(cartState)
     const orderState = useSelector(state=>state.order)
     const detState = useSelector(state=>state.details)
     const dispatch = useDispatch()
@@ -52,22 +53,18 @@ export default function OrderCheckout(){
     const [newAddress, setNewAddress] = useState()
     const [selectedAddress, setSelectedAddress] = useState()
     const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false);
-    console.log(orderState)
+    // console.log(orderState)
     var custId = null;
     const token = sessionStorage.getItem('token');
     if(token){
         const decoded = jwt_decode(token);
         custId = decoded.id;
-        console.log(decoded)
     }
 
     const handleSuccessMsgClose = () => {
         hist.push('/')
         setOpenSuccessMsg(false);
       };
-
-    // const custId = cartState.custId
-    // console.log(detState.rest)
 
     useEffect(async ()=> {
         try {
@@ -77,13 +74,24 @@ export default function OrderCheckout(){
         console.log(error);}
         },[newAddress]);
 
-        useEffect(async ()=> {
+    useEffect(async ()=> {
             try {
                 const response = await axiosInstance.get(`customers/${custId}/addresses`);
+                console.log('im here')
                 dispatch(setDelivaryAddress({address:response.data.existingAddresses}))
             } catch (error) {
             console.log(error);}
-            },[]);
+    },[]);
+
+    useEffect(async ()=> {
+                try {
+                    const cartResponse = await axiosInstance.get(`customers/${custId}/cart`);
+                    console.log('this is working')
+                    dispatch(setCartReduxFromDB({cartItems:cartResponse.data.cartItems}))
+                    // console.log(cartResponse.data);
+                } catch (error) {
+                console.log(error);}
+     },[]);
 
     const placeOrderHandler = async ()=>{
         console.log("Placeorder clicked")
@@ -92,14 +100,17 @@ export default function OrderCheckout(){
             dishes.push(cartState.dishes[i].dish)
         }
         // console.log(dishes)
+        // console.log(cartState)
+        // console.log(cartState.restaurant._id)
 
         const orderObj ={
             orderType:"Delivery",
             price: totalSum,
             taxPrice: tax,
             totalPrice: total,
+            restId: cartState.restaurant._id,
             orderAddress: selectedAddress[0].address,
-            cartItems: dishes
+            cartId: cartState.cartId
         }
         try {
             const response = await axiosInstance.post(`/customers/${custId}/orders/init`, orderObj);
@@ -152,7 +163,8 @@ export default function OrderCheckout(){
             <div className={classes.column1}>
                     <Typography component="div" variant="h4">
                     {/* {cartState.dishes[0].restId} */}
-                        {(cartState.dishes.length>0)&&<div>Restaurant Name: {cartState.restaurant.name} </div> }
+{/* {cartState.restaurant} */}
+                        {(cartState.dishes.length>0)&&(cartState.restaurant)&&<div>Restaurant Name: {cartState.restaurant.name} </div> }
                      </Typography>
                      <Typography component="div" variant="h6">
                         Your Items

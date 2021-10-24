@@ -18,3 +18,7 @@ export function addRestaurantDetailsToCart(payload) {
 export function resetCart() {
     return { type: 'RESET_CART'};
   }
+
+export function setCartReduxFromDB(payload) {
+    return { type: 'SET_CART_FROM_DB', payload};
+  }

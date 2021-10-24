@@ -24,19 +24,55 @@ import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
 import { useEffect } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
+import axiosInstance from '../config/axiosConfig';
+import jwt_decode from 'jwt-decode';
+
 
 export default function AppBarPrimary() {
   const [toggleDraw, setToggleDraw] = useState(false)
   const dispatch = useDispatch()
   const hist = useHistory()
+  const [custId,setCustId] = useState()
+  const [restId,setRestId] = useState()
   const Custtoken= useSelector(state=>state.customer);
   const Resttoken= useSelector(state=>state.restaurant);
   const [searchquery, setCurSearchQuery] = useState('')
   const [cart, setCart] = useState({});
   
   const [openCart, setOpenCart] = React.useState(false);
-  const handleClickOpenCart = () => { setOpenCart(true);};
-  const handleCloseCart = () => { setOpenCart(false); };
+
+  useEffect(() => {
+        const token = sessionStorage.getItem('token');
+        if(token){
+        const decoded = jwt_decode(token);
+        if(decoded.role=='customer'){
+          setCustId(decoded.id)
+        }
+        else if(decoded.role == 'restaurant'){
+          setRestId(decoded.id)
+        }
+      }
+  }, [Custtoken.token, Resttoken.token])
+
+  const handleClickOpenCart = () => { 
+    axiosInstance.get(`/customers/${custId}/cart`)
+        .then((data)=>{
+          console.log(data);
+        }).catch(error=>console.log(error))
+    setOpenCart(true);
+  };
+
+  //cart close
+  const handleCloseCart = () => { 
+    setOpenCart(false);
+    console.log('cart closed')
+    axiosInstance.post(`/customers/${custId}/cart`, cartState)
+        .then((data)=>{
+          console.log(data);
+        }).catch(error=>console.log(error))
+
+    console.log(cartState);
+   };
   const cartState = useSelector(state=>state.cart)
   
   useEffect(() => {
@@ -56,6 +92,8 @@ export default function AppBarPrimary() {
     dispatch(logoutRestaurant());
     dispatch(logoutCustomer());
     sessionStorage.clear('token');
+    setRestId(null)
+    setCustId(null)
     hist.push('/')
   }
 
@@ -100,13 +138,13 @@ export default function AppBarPrimary() {
             }}>Search</Button>
           </Form>}
 
-          {(!Custtoken.token && !Resttoken.token)&&<Nav.Link href="/login/customer">Login</Nav.Link>}
-          {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/')}>Home</Nav.Link>}
-          {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/customerFavorites')}>Favourites</Nav.Link>}
-          {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/customer/update')}>Update Profile</Nav.Link>}
-          {(Custtoken.token)&&<Nav.Link onClick={()=>hist.push('/viewOrders')}>View Orders</Nav.Link>}
-          {(Resttoken.token)&&<Nav.Link onClick={()=>hist.push('/viewRestaurantOrders')}>View Orders</Nav.Link>}
-          {(Custtoken.token)&&<Nav.Link onClick={handleClickOpenCart} style={{background:"black",borderRadius:"20px",color:"white",width:"60px"}}>Cart {cartState.dishes.length}</Nav.Link>}
+          {(!custId && !restId)&&<Nav.Link href="/login/customer">Login</Nav.Link>}
+          {(custId)&&<Nav.Link onClick={()=>hist.push('/')}>Home</Nav.Link>}
+          {(custId)&&<Nav.Link onClick={()=>hist.push('/customerFavorites')}>Favourites</Nav.Link>}
+          {(custId)&&<Nav.Link onClick={()=>hist.push('/customer/update')}>Update Profile</Nav.Link>}
+          {(custId)&&<Nav.Link onClick={()=>hist.push('/viewOrders')}>View Orders</Nav.Link>}
+          {(restId)&&<Nav.Link onClick={()=>hist.push('/viewRestaurantOrders')}>View Orders</Nav.Link>}
+          {(custId)&&<Nav.Link onClick={handleClickOpenCart} style={{background:"black",borderRadius:"20px",color:"white",width:"60px"}}>Cart {cartState.dishes.length}</Nav.Link>}
           <Dialog
               open={openCart}
               onClose={handleCloseCart}
@@ -148,7 +186,7 @@ export default function AppBarPrimary() {
               </DialogContentText>
           </DialogContent>
           </Dialog>
-          {(Custtoken.token || Resttoken.token)&&<Nav.Link onClick={logoutHandler}>Logout</Nav.Link>}
+          {(custId || restId)&&<Nav.Link onClick={logoutHandler}>Logout</Nav.Link>}
         </Nav>
         
         
