@@ -40,12 +40,14 @@ function CustomerDashboard() {
   const hist = useHistory()
   const classes = useStyles()
   const dispatch = useDispatch()
-  const token = sessionStorage.getItem('token');
   var custId = null;
   const searchState = useSelector(state=>state.search)
+  const token =  sessionStorage.getItem('token');
   if(token){
-  const decoded = jwt_decode(token);
-     custId = decoded.id;
+      (async() =>{
+          var decoded = await jwt_decode(token);
+          custId = decoded.id
+      })()
   }
   console.log(custId)
 
@@ -101,12 +103,12 @@ function CustomerDashboard() {
   };
 
   const favClickHandler =(favRestaurant)=>{
-    // console.log(favRestaurant.restId)
-    axiosInstance.post(`customers/favourites/${custId}`, {restId:favRestaurant.restId})
+    // console.log(favRestaurant)
+    axiosInstance.post(`customers/favourites/${custId}`, {restId:favRestaurant._id})
         .then((data)=>{
             console.log(data)
         }).catch(error=>console.log(error))
-    // dispatch(addRestToFav({favRestaurant}))
+    dispatch(addRestToFav({favRestaurant}))
   }
 
   const dietHandler =(diet)=>{

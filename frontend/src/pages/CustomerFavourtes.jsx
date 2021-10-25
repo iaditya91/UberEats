@@ -28,10 +28,12 @@ export default function CustomerFavourtes() {
     const classes = useStyles()
     const [favRest, setFavRest] = useState([])
     var custId = null;
-    const token = sessionStorage.getItem('token');
+    const token =  sessionStorage.getItem('token');
     if(token){
-        const decoded = jwt_decode(token);
-        custId = decoded.id;
+        (async() =>{
+            var decoded = await jwt_decode(token);
+            custId = decoded.id
+        })()
     }
 
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function CustomerFavourtes() {
         }).catch(error=>console.log(error))
   }, [])
 
+  console.log('this is favrest:')
   console.log(favRest)
 
 
@@ -54,21 +57,21 @@ export default function CustomerFavourtes() {
       <div style={{ marginLeft: "10px", display:"grid", gridGap:"10px",gridTemplateRows:"repeat(2,170px)",gridTemplateColumns:"repeat(auto-fill, 450px)"}}>
             {favRest.length>0 && favRest.map((rest) => {
                     return (
-                            <Card onClick={()=>{hist.push(`/restaurantMain/${rest.restId}`)}}>
+                            <Card onClick={()=>{hist.push(`/restaurantMain/${rest.restId._id}`)}}>
                             <Box style={{ display: 'flex' ,flexDirection:'columns', width:"100%", height:"100%"}}>
 
                             <CardContent style={{display: 'grid' ,gridTemplateRows:'repeat(2,30px)'}} >
                                 <Typography style={{justifyContent:'center'}} component="div" variant="h5">
-                                   {rest.restaurant.name}
+                                   {/* {rest.restId.name} */}
                                 </Typography>
                                 <Typography style={{justifyContent:'center'}} variant="subtitle1" color="text.secondary" component="div">
-                                   {rest.restaurant.description}
+                                   {rest.restId.description}
                                 </Typography></CardContent>
                             
                                 <CardMedia style={{marginLeft:"auto"}}
                                 component="img"
                                 sx={{ width: 151 }}
-                                image={rest.restaurant.profileImg}
+                                image={rest.restId.profileImg}
                                 alt="Dish Image"
                             />
                             </Box>

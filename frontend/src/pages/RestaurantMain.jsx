@@ -67,24 +67,24 @@ const RestaurantMain =  ()=>{
     const cardOnClickHandler = async (name)=>{
         
         try {
-            console.log('on click handler try')
+            // console.log('on click handler try')
             // console.log(restaurant)
             // console.log(cartState.restaurant)
             
             if(JSON.stringify(cartState.restaurant)==='{}'){
-                console.log('entered into 1st if stmt')
+                // console.log('entered into 1st if stmt')
                 dispatch(addRestaurantDetailsToCart({restaurant}))
                 dispatch(addDishToCart({dishId: name, quantity:1,custId}))
             }
             else if(cartState.restaurant._id==restaurant._id){
-                console.log('entered into 2nd if stmt')
+                // console.log('entered into 2nd if stmt')
                 dispatch(addDishToCart({dishId: name, quantity:1, custId}))
             }
             else{
                 setWarningDish(name)
                 setOpenWarning(true)
             }
-            console.log(cartState)
+            // console.log(cartState)
         } catch (error) {
         console.log(error);}
     }
@@ -99,7 +99,7 @@ const RestaurantMain =  ()=>{
 
     useEffect(async ()=> {
             try {
-                console.log(restId)
+                // console.log(restId)
                 const response = await axiosInstance.get(`/restaurants/${restId}`);
                 setRestaurant(response.data.rest)
                 dispatch(createCart({custId}))

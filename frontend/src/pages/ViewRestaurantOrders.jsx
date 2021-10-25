@@ -162,11 +162,11 @@ export default function ViewRestaurantOrders() {
           {displayOrders.map(order=>{
             return (
             <div style={{width:`100%`, backgroundColor:`white`, border: "none", borderBottom: "1px dotted black"}}>
-              Order recieved from customer {order.custId}<br/>
+              Order recieved from customer {order.custId.name}<br/>
               <Link
                         component="button"
                         variant="body2"
-                        onClick={()=>viewProfileHandler(order.custId)}
+                        onClick={()=>viewProfileHandler(order.custId._id)}
                       > View Profile</Link>
               <Typography  component="p" variant="subtitle1">Order Details</Typography>
               {order.orderDishes.map(dish=> <div>{dish.dish.name}  {dish.dish.dishPrice}</div>)}

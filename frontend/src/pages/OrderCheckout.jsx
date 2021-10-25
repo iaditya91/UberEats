@@ -55,10 +55,12 @@ export default function OrderCheckout(){
     const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false);
     // console.log(orderState)
     var custId = null;
-    const token = sessionStorage.getItem('token');
+    const token =  sessionStorage.getItem('token');
     if(token){
-        const decoded = jwt_decode(token);
-        custId = decoded.id;
+        (async() =>{
+            var decoded = await jwt_decode(token);
+            custId = decoded.id
+        })()
     }
 
     const handleSuccessMsgClose = () => {
@@ -230,7 +232,7 @@ export default function OrderCheckout(){
                 <Button varient='contained' 
                     onClick={(e)=>{
                         e.preventDefault()
-                        dispatch(resetCart())
+                        dispatch(resetCart(custId))
                         handleSuccessMsgClose()
                 }} style={{backgroundColor:"black", color:"white"}}>Go To Home</Button>
                 </DialogActions>

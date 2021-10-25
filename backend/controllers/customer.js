@@ -189,10 +189,7 @@ const getCustomerFavourites = async (req, res) => {
     // if (String(req.headers.id) !== String(custId)) {
     //   return res.status(401).json({ error: 'Unauthorized request!' });
     // }
-    const favRests = await custFavs.find({
-      where: { custId },
-      include: [{ model: restaurant }],
-    });
+    const favRests = await custFavs.find( { custId }).populate({path:'restId',model:'restaurant'}).populate({path:'custId',model:'customer'});
     return res.status(200).json({ favRests });
   } catch (error) {
     return res.status(500).json({ error: error.message });
