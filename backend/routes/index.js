@@ -15,8 +15,6 @@ const {
   orderValidationRules,
   customerAddressValidationRules,
 } = require('../controllers/valdiationRules');
-const multer  = require('multer')
-const upload = multer({dest: 'uploads/'})
 
 const router = Router();
 
@@ -97,16 +95,10 @@ router.delete(
 
 // Cart routes
 router.post('/customers/:custId/cart', cartController.insertItemsToCart);
-// router.post('/customers/:custId/cart', cartController.insertIntoCart);
-// router.post(
-//   '/customers/:custId/reset-cart',
-//   cartController.resetCartWithDifferentRestaurant,
-// );
 router.get('/customers/:custId/cart', cartController.viewCart);
-router.delete(
-  '/customers/:custId/cart/:dishId',
-  cartController.deleteFromCart,
-);
+router.put('/customers/:custId/cart/:dishId', cartController.addItemToCart);
+router.put('/customers/:custId/updatecart', cartController.updateItemQuantity);
+router.delete('/customers/:custId/deletecart', cartController.deleteCart);
 
 // Order routes
 router.post(

@@ -125,7 +125,7 @@ const cart = mongoose.model('cart', new Schema({
   custId: {type: Schema.Types.ObjectId ,ref:'customer'},
   restId: {type: Schema.Types.ObjectId ,ref:'restaurant'},
   dishes: [{
-    dish: {type: Schema.Types.ObjectId, ref:'dish'}, 
+    dish: {type: Schema.Types.ObjectId, ref:'dish',unique:true}, 
     quantity: {type: Number}}]
 },
 {

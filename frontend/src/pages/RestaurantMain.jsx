@@ -12,7 +12,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import axiosInstance from '../config/axiosConfig';
 import { useSelector, useDispatch } from 'react-redux';
-import {createCart, addDishToCart, addRestaurantDetailsToCart, resetCart} from '../reducers/actions/cartActions'
+import {createCart, addDishToCart, addRestaurantDetailsToCart, resetCart, setCartReduxFromDB} from '../reducers/actions/cartActions'
 import jwt_decode from 'jwt-decode';
 import { useParams } from 'react-router';
 import { setRestaurantDetails } from '../reducers/actions/detActions';
@@ -23,8 +23,6 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 
 
-
-const token = sessionStorage.getItem('token');
 // const restId =  1 //sessionStorage.getItem('restId')
 
 const useStyles = makeStyles(theme=>({
@@ -37,8 +35,10 @@ const useStyles = makeStyles(theme=>({
     },
 }));
 
-export default function RestaurantMain(){
+const RestaurantMain =  ()=>{
     const classes= useStyles()
+    // const [custId, setCustId] =  useState(null)
+    var custId = null;
     const {restId} = useParams()
     const dispatch = useDispatch()
     const [dishes,setDishes] = useState({})
@@ -46,30 +46,39 @@ export default function RestaurantMain(){
     const cartState = useSelector(state=> state.cart)
     const [warningDish, setWarningDish] = useState({})
     const [openWarning, setOpenWarning] = React.useState(false);
-    
-    var custId = 1;
+    const token =  sessionStorage.getItem('token');
     if(token){
-        const decoded = jwt_decode(token);
-        var custId = decoded.id;
+        (async() =>{
+            var decoded = await jwt_decode(token);
+            custId = decoded.id
+        })()
     }
-    
-    // localStorage.setItem('dishes',dishes)
+
+    // useEffect(() => {
+    //     if(decoded){
+    //         setCustId(decoded.id)
+    //     }
+    // }, [decoded])
 
     const handleWarningClose = () => {
         setOpenWarning(false);
       };
 
     const cardOnClickHandler = async (name)=>{
-        console.log('card clicked!');
-        console.log(name);
         
         try {
+            console.log('on click handler try')
+            // console.log(restaurant)
+            // console.log(cartState.restaurant)
+            
             if(JSON.stringify(cartState.restaurant)==='{}'){
+                console.log('entered into 1st if stmt')
                 dispatch(addRestaurantDetailsToCart({restaurant}))
-                dispatch(addDishToCart({dishId: name, quantity:1}))
+                dispatch(addDishToCart({dishId: name, quantity:1,custId}))
             }
-            else if(cartState.restaurant.restId==restaurant.restId){
-                dispatch(addDishToCart({dishId: name, quantity:1}))
+            else if(cartState.restaurant._id==restaurant._id){
+                console.log('entered into 2nd if stmt')
+                dispatch(addDishToCart({dishId: name, quantity:1, custId}))
             }
             else{
                 setWarningDish(name)
@@ -157,7 +166,7 @@ export default function RestaurantMain(){
         <IconButton style={{marginLeft:"auto"}} onClick={handleWarningClose}><CloseIcon /></IconButton></div>
         <DialogContent dividers>
         <Typography gutterBottom>
-            Your order contains items from {cartState.restaurant.name}. Create a new order to add items from {restaurant.name}.
+            Your order contains items from {(cartState.restaurant)&& cartState.restaurant.name}. Create a new order to add items from {restaurant.name}.
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -169,8 +178,8 @@ export default function RestaurantMain(){
         <Button varient='contained' 
             onClick={(e)=>{
                 e.preventDefault()
-                dispatch(resetCart())
-                dispatch(addDishToCart({dishId: warningDish, quantity:1}))
+                dispatch(resetCart({custId}))
+                dispatch(addDishToCart({custId,dishId: warningDish, quantity:1}))
                 handleWarningClose()
         }} style={{backgroundColor:"black", color:"white"}}>New Order</Button>
         </DialogActions>
@@ -178,3 +187,5 @@ export default function RestaurantMain(){
        </div>
     )
 }
+
+export default RestaurantMain;

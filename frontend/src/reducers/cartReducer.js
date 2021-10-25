@@ -4,16 +4,17 @@ const initialState = {
     custId: '',
     dishes: [],
     restaurant: '',
+    orderNote: '',
   };
  
- export default function cartReducer(state = initialState, action) {
+function cartReducer(state = initialState, action) {
     switch (action.type) {
         case 'SET_CART_FROM_DB':
-            return {
-                cartId: action.payload.cartItems._id,
-                custId: action.payload.cartItems.custId._id,
-                dishes: action.payload.cartItems.dishes,
-                restaurant: action.payload.cartItems.restId,
+            return  {
+                cartId: action.cartData._id,
+                custId: action.cartData.custId._id,
+                dishes: action.cartData.dishes,
+                restaurant: action.cartData.restId,
             }
         case 'CREATE_CART':
             return {
@@ -40,20 +41,18 @@ const initialState = {
             let alldishes = state.dishes
             if(action.payload.quantity<=0){
                 for(let i=0;i<state.dishes.length;i++){
-                    if(state.dishes[i].dish.dishId==action.payload.dishId.dishId){
+                    if(state.dishes[i].dish._id==action.payload.dishId._id){
                         alldishes.splice(i, 1)
                     }
                 }
-            }
-            
+            }    
             else{
                 for(let i=0;i<state.dishes.length;i++){
-                    if(state.dishes[i].dish.dishId==action.payload.dishId.dishId){
+                    if(state.dishes[i].dish._id==action.payload.dishId._id){
                         alldishes[i].quantity= action.payload.quantity
                     }
                 }
             }
-            console.log(alldishes)
             return {
                 ...state,
                 dishes: alldishes
@@ -62,3 +61,6 @@ const initialState = {
             return state;
     }
   };
+
+
+  export default cartReducer;

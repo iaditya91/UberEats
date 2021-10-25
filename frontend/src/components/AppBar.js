@@ -10,6 +10,7 @@ import {
 } from 'react-bootstrap';
 import IconButton from '@mui/material/IconButton';
 import uberlogo from '../images/ubereats.svg';
+import {setCartReduxFromDB} from '../reducers/actions/cartActions'
 import { logoutCustomer } from '../reducers/actions/customer';
 import { logoutRestaurant } from '../reducers/actions/restaurant';
 import { setSearchQuery } from '../reducers/actions/searchAction'
@@ -46,6 +47,8 @@ export default function AppBarPrimary() {
         if(token){
         const decoded = jwt_decode(token);
         if(decoded.role=='customer'){
+          console.log('im here')
+          dispatch(setCartReduxFromDB({custId:decoded.id}))
           setCustId(decoded.id)
         }
         else if(decoded.role == 'restaurant'){
@@ -66,10 +69,10 @@ export default function AppBarPrimary() {
   const handleCloseCart = () => { 
     setOpenCart(false);
     console.log('cart closed')
-    axiosInstance.post(`/customers/${custId}/cart`, cartState)
-        .then((data)=>{
-          console.log(data);
-        }).catch(error=>console.log(error))
+    // axiosInstance.post(`/customers/${custId}/cart`, cartState)
+    //     .then((data)=>{
+    //       console.log(data);
+    //     }).catch(error=>console.log(error))
 
     console.log(cartState);
    };
@@ -167,13 +170,13 @@ export default function AppBarPrimary() {
                                   Price: {item.dish.dishPrice * item.quantity} $   
                                  <button onClick={(e)=>{
                                    e.preventDefault()
-                                   console.log('-')
-                                   dispatch(updateDishQuantity({dishId: item.dish, quantity:item.quantity-1}))
+                                  //  console.log('-')
+                                   dispatch(updateDishQuantity({custId, dishId: item.dish, quantity:item.quantity-1}))
                                    }}>-</button> {item.quantity}
                                    <button onClick={(e)=>{
                                      e.preventDefault()
-                                     console.log('+')
-                                     dispatch(updateDishQuantity({dishId: item.dish, quantity:item.quantity+1}))
+                                    //  console.log('+')
+                                     dispatch(updateDishQuantity({custId, dishId: item.dish, quantity:item.quantity+1}))
                                      }}>+</button>
                              </Typography>
                                </div>

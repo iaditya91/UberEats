@@ -4,8 +4,6 @@ var objectId = require('mongodb').ObjectId;
 const insertItemsToCart = async (req, res) => {
   try {
     const { custId } = req.params;
-    // console.log(req.body)
-    // console.log(req.body.restaurant._id)
     const existingCustomer = await cart.findOne({custId});
     if(existingCustomer){
       await cart.deleteOne({custId})
@@ -15,6 +13,7 @@ const insertItemsToCart = async (req, res) => {
       restId:req.body.restaurant._id,
       dishes:req.body.dishes
     });
+    res.status(200).json({ msg: 'dish added successfully!' })
   }
   catch (error) {
     return res.status(500).json({ error: error.message });
@@ -24,11 +23,7 @@ const insertItemsToCart = async (req, res) => {
 const viewCart = async (req, res) => {
   try {
     const { custId } = req.params;
-    // console.log(custId)
-    // console.log(req.body.restaurant._id)
-    // const cartItems = await cart.findOne({custId:objectId(custId)}).populate("dish","restaurant");
     const cartItems = await cart.findOne({custId:objectId(custId)}).populate({path:'dishes.dish',model:'dish'}).populate({path:'restId',model:'restaurant'}).populate({path:'custId',model:'customer'});
-    // console.log(cartItems)
     if (!cartItems) {
         return res.status(200).json({ message: 'No items in cart!' });
     }
@@ -39,170 +34,63 @@ const viewCart = async (req, res) => {
   }
 }
 
-const insertIntoCart = async (req, res) => {
+const deleteCart = async (req, res) => {
   try {
     const { custId } = req.params;
-    // if (String(req.headers.id) !== String(custId)) {
-    //   return res.status(401).json({ error: 'Unauthorized request!' });
-    // }
-    const { restId, dishId } = req.body;
-    // If restaurant ID or Dish ID is not sent
-    if (!restId) {
-      return res
-        .status(400)
-        .json({ error: 'Please select restaurant!' });
+    const cartItems = await cart.findOne({custId});
+    if (!cartItems) {
+        return res.status(200).json({ message: 'No cart!' });
     }
-    if (!dishId) {
-      return res.status(400).json({ error: 'Please select dish!' });
-    }
-    const checkExistingRest = await restaurant.findOne({
-      where: { restId },
-    });
-    // Check if restaurant ID or Dish ID exists in database
-    if (!checkExistingRest) {
-      return res.status(404).json({ error: 'Restaurant not found!' });
-    }
-    const checkExistingDish = await dish.findOne({
-      where: { dishId, restId },
-    });
-    if (!checkExistingDish) {
-      return res.status(404).json({ error: 'Dish not found!' });
-    }
-    const latestCartEntry = await cart.findOne({
-      where: { custId },
-      order: [['createdAt', 'DESC']],
-    });
-    if (!latestCartEntry) {
-      req.body.custId = custId;
-      const cartEntry = await cart.create(req.body);
-      return res.status(201).json({
-        cartEntry,
-      });
-    }
-    // If added into cart from different restaurant
-    if (latestCartEntry.restId !== restId) {
-      // const newDishInfo = await dish.findOne({
-      //   where: { dishId },
-      // });
-      return res.status(200).json({
-        message: 'Create new order?',
-        ...req.body,
-        newRestId: restId,
-        oldRestId: latestCartEntry.restId,
-      });
-    }
-    // Else add into cart
-    req.body.custId = custId;
-    const cartEntry = await cart.create(req.body);
-    return res.status(201).json({
-      cartEntry,
-    });
-  } catch (error) {
+    await cart.deleteOne({custId});
+    return res.status(200).json({ msg:"Cart deleted successfully!" });
+  }
+  catch (error) {
     return res.status(500).json({ error: error.message });
   }
-};
+}
 
-const resetCartWithDifferentRestaurant = async (req, res) => {
+const addItemToCart = async (req, res) => {
+  try {
+    const { custId,dishId } = req.params;
+    console.log(req.body)
+    console.log(custId, dishId)
+    const existingCart = await cart.findOne({custId});
+    if(!existingCart){
+      await cart.create({
+        custId,
+        restId:req.body.dishId.restId
+      });
+    }
+    await cart.find({custId,"dishes.dish":{$nin:[req.body.dishId._id]}}).update({$addToSet:{dishes:{dish:req.body.dishId._id, quantity:req.body.quantity}}});
+
+  }
+  catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+const updateItemQuantity = async (req, res) => {
   try {
     const { custId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
+    console.log(req.body)
+    console.log(custId)
+    const existingCart = await cart.findOne({custId});
+    if(!existingCart){
+      return res.status(500).json({msg:'no cart found!'});
     }
-    const deleteAllCartItems = await cart.destroy({
-      where: { custId },
-    });
-    if (!deleteAllCartItems) {
-      return res
-        .status(500)
-        .json({ error: 'Server error! Could not reset cart!' });
-    }
-    const { restId, dishId } = req.body;
-    // If restaurant ID or Dish ID is not sent
-    if (!restId) {
-      return res
-        .status(400)
-        .json({ error: 'Please select restaurant!' });
-    }
-    if (!dishId) {
-      return res.status(400).json({ error: 'Please select dish!' });
-    }
-    const checkExistingRest = await restaurant.findOne({
-      where: { restId },
-    });
-    // Check if restaurant ID or Dish ID exists in database
-    if (!checkExistingRest) {
-      return res.status(404).json({ error: 'Restaurant not found!' });
-    }
-    const checkExistingDish = await dish.findOne({
-      where: { dishId, restId },
-    });
-    if (!checkExistingDish) {
-      return res.status(404).json({ error: 'Dish not found!' });
-    }
-    // Add new dish from different restaurant
-    req.body.custId = custId;
-    const cartEntry = await cart.create(req.body);
-    return res.status(201).json({
-      cartEntry,
-    });
-  } catch (error) {
+    // await cart.find({custId}).update({$set:{dishes:{dish:req.body.dishId._id, quantity:req.body.quantity}}});
+    await cart.updateOne({custId,"dishes.dish":req.body.dishId._id},{$set:{"dishes.$.quantity": req.body.quantity}});
+    return res.status(200).json({msg:'item quantity updated successfully!'});
+  }
+  catch (error) {
     return res.status(500).json({ error: error.message });
   }
-};
-
-// const viewCart = async (req, res) => {
-//   try {
-//     const { custId } = req.params;
-//     // if (String(req.headers.id) !== String(custId)) {
-//     //   return res.status(401).json({ error: 'Unauthorized request!' });
-//     // }
-//     const cartItems = await cart.findAll({
-//       include: [{ model: dish }],
-//       where: { custId },
-//     });
-//     if (!cartItems) {
-//       return res.status(200).json({ message: 'No items in cart!' });
-//     }
-//     return res.status(200).json({ cartItems });
-//   } catch (error) {
-//     return res.status(500).json({ error: error.message });
-//   }
-// };
-
-const deleteFromCart = async (req, res) => {
-  try {
-    const { custId, dishId } = req.params;
-    if (String(req.headers.id) !== String(custId)) {
-      return res.status(401).json({ error: 'Unauthorized request!' });
-    }
-    const checkExistingDish = await cart.findOne({
-      where: { dishId },
-    });
-    if (!checkExistingDish) {
-      return res
-        .status(404)
-        .json({ error: 'No dish found in cart!' });
-    }
-    const deletedCartItem = await cart.destroy({
-      where: { custId, dishId },
-    });
-    if (deletedCartItem) {
-      return res
-        .status(200)
-        .json({ message: 'Item removed from cart successfully!' });
-    }
-    return res
-      .status(404)
-      .json({ error: 'Item could not be deleted!' });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-};
+}
 
 module.exports = {
   insertItemsToCart,
-  insertIntoCart,
   viewCart,
-  deleteFromCart,
-  resetCartWithDifferentRestaurant,
+  deleteCart,
+  addItemToCart,
+  updateItemQuantity
 };
