@@ -47,7 +47,7 @@ export default function AppBarPrimary() {
         if(token){
         const decoded = jwt_decode(token);
         if(decoded.role=='customer'){
-          console.log('im here')
+          // console.log('im here')
           dispatch(setCartReduxFromDB({custId:decoded.id}))
           setCustId(decoded.id)
         }
@@ -143,6 +143,7 @@ export default function AppBarPrimary() {
 
           {(!custId && !restId)&&<Nav.Link href="/login/customer">Login</Nav.Link>}
           {(custId)&&<Nav.Link onClick={()=>hist.push('/')}>Home</Nav.Link>}
+              {(restId)&&<Nav.Link onClick={()=>hist.push('/restaurantAdmin')}>Home</Nav.Link>}
           {(custId)&&<Nav.Link onClick={()=>hist.push('/customerFavorites')}>Favourites</Nav.Link>}
           {(custId)&&<Nav.Link onClick={()=>hist.push('/customer/update')}>Update Profile</Nav.Link>}
           {(custId)&&<Nav.Link onClick={()=>hist.push('/viewOrders')}>View Orders</Nav.Link>}
@@ -162,7 +163,7 @@ export default function AppBarPrimary() {
                           <div>
                           {cart.length > 0  && cart.map((item) => {
                             return (
-                               <div>
+                               <div key={item.dish._id}>
                                 <Typography component="div" variant="h6">
                                    {item.dish.name} 
                                 </Typography>

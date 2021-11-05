@@ -53,16 +53,20 @@ const addItemToCart = async (req, res) => {
   try {
     const { custId,dishId } = req.params;
     console.log(req.body)
-    console.log(custId, dishId)
+    // console.log(custId, dishId)
     const existingCart = await cart.findOne({custId});
+    // console.log(existingCart)
     if(!existingCart){
       await cart.create({
         custId,
         restId:req.body.dishId.restId
       });
     }
+    else if (existingCart.restId !== req.body.dishId._id || existingCart.restId==null){
+      await cart.updateOne({ custId },{$set:{restId:req.body.dishId._id}});
+    }
     await cart.find({custId,"dishes.dish":{$nin:[req.body.dishId._id]}}).update({$addToSet:{dishes:{dish:req.body.dishId._id, quantity:req.body.quantity}}});
-
+    return res.status(200).json({ msg:"Item added successfully!" });
   }
   catch (error) {
     return res.status(500).json({ error: error.message });
@@ -72,13 +76,19 @@ const addItemToCart = async (req, res) => {
 const updateItemQuantity = async (req, res) => {
   try {
     const { custId } = req.params;
-    console.log(req.body)
-    console.log(custId)
+    // console.log(req.body)
+    // console.log(custId)
     const existingCart = await cart.findOne({custId});
     if(!existingCart){
       return res.status(500).json({msg:'no cart found!'});
     }
-    // await cart.find({custId}).update({$set:{dishes:{dish:req.body.dishId._id, quantity:req.body.quantity}}});
+    else if(req.body.quantity<=0){
+      const resp = cart.updateOne(
+          { custId},
+          { $pull: { "dishes": { "dish": req.body.dishId._id } } }
+      );
+      return res.status(200).json({resp, msg:'item quantity updated successfully!'});
+    }
     await cart.updateOne({custId,"dishes.dish":req.body.dishId._id},{$set:{"dishes.$.quantity": req.body.quantity}});
     return res.status(200).json({msg:'item quantity updated successfully!'});
   }

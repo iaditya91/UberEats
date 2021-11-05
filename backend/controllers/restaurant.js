@@ -20,8 +20,10 @@ const createRestaurant = async (req, res) => {
     // Else create new restaurant
     req.body.passwd = await bcrypt.hash(req.body.passwd, 12); // crypt the password
     const rest = await restaurant.create(req.body);
+    const token = generateAccessToken(rest._id, 'restaurant');
     return res.status(201).json({
       rest,
+      token
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -76,9 +78,15 @@ const getRestaurant = async (req, res) => {
 const searchRestaurants = async (req, res) => {
   try {
     const { searchquery } = req.params;
-    const rest = await restaurant.find(
+    var rest = ""
+    if(searchquery || searchquery!=""){
+    var rest = await restaurant.find(
       { city: searchquery },
     );
+    }
+    else{
+      var rest = await restaurant.find({});
+    }
 
     if (rest) {
       return res.status(200).json({ rest });

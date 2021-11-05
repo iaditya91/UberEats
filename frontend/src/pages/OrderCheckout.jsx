@@ -52,6 +52,7 @@ export default function OrderCheckout(){
     const [address, setAddress] = useState()
     const [newAddress, setNewAddress] = useState()
     const [selectedAddress, setSelectedAddress] = useState()
+    const [orderNote,setOrderNote] = useState('')
     const [openSuccessMsg, setOpenSuccessMsg] = React.useState(false);
     // console.log(orderState)
     var custId = null;
@@ -112,12 +113,14 @@ export default function OrderCheckout(){
             totalPrice: total,
             restId: cartState.restaurant._id,
             orderAddress: selectedAddress[0].address,
-            cartId: cartState.cartId
+            dishes: cartState.dishes,
+            orderNote
         }
         try {
             const response = await axiosInstance.post(`/customers/${custId}/orders/init`, orderObj);
             console.log("HERE")
             console.log(response)
+            dispatch(resetCart({custId}))
             setOpenSuccessMsg(true)
         } catch (error) {
             console.log(error);}
@@ -147,6 +150,12 @@ export default function OrderCheckout(){
          } catch (error) {
          console.log(error);
     }};
+
+    const orderNoteOnChange =(event)=>{
+        const { value}= event.target
+        setOrderNote(value)
+        // console.log(address)
+    }
 
     const delivaryOnSelectHandler =(event)=>{
         console.log(event.target)
@@ -199,6 +208,9 @@ export default function OrderCheckout(){
                     <TextField name="address" onChange={newAddressOnChange} id="filled-basic" label="New Delivary Address" variant="standard" />
                     <Button onClick={addAddressHandler} varient='contained'>Add Address</Button>
                     </form>
+
+                    <TextField name="orderNote" onChange={orderNoteOnChange} value={orderNote} id="filled-basic" label="Add Note to your order" variant="standard" />
+                    
                     
                     
              </div>

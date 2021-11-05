@@ -45,6 +45,7 @@ export default function ViewOrders() {
         const decoded = jwt_decode(token);
         custId = decoded.id;
     }
+    console.log('restaurant names')
     console.log(restaurantNames)
     var restNames = {}
 
@@ -55,11 +56,14 @@ export default function ViewOrders() {
     useEffect(async ()=> {
         try {
             const response = await axiosInstance.get(`/customers/${custId}/orders`);
+            console.log(response)
             
             setOrders(response.data.customerOrders)
             
             orders.map(async (order)=>{
               let restDetails = await axiosInstance.get(`/restaurants/${order.restId}`);
+              console.log('rest Details from api:')
+              console.log(restDetails)
               restNames[order.restId] = restDetails.data.rest.name
             })
             setRestaurantNames(restNames)
@@ -70,7 +74,7 @@ export default function ViewOrders() {
     console.log(restaurantNames)
     const viewReciptHandler = (orderId)=>{
       console.log('view recipt handler')
-      const curorder = orders.filter(order=>order.orderId ==orderId)
+      const curorder = orders.filter(order=>order._id ==orderId)
       console.log(orders)
       console.log(curorder)
       setOpenReceipt(true)
@@ -128,12 +132,15 @@ export default function ViewOrders() {
 
       <div className={classes.Orders}>
             {displayOrders.length>0 && displayOrders.map(order=>  { 
-              return <div style={{ border: "none", borderBottom: "1px dotted black" }}>{restaurantNames[order.restId]}<br/>
-                      {order.orderDishes.length} items for ${order.totalPrice} . {order.orderPlacedTime.split('T')[0]} at {order.orderPlacedTime.split('T')[1].split(':')[0]}:{order.orderPlacedTime.split('T')[1].split(':')[0]} .  
+              return <div style={{ border: "none", borderBottom: "1px dotted black" }}>{order.restId.name}<br/>
+                      {order.dishes.length} items for ${order.totalPrice} . {order.orderPlacedTime.split('T')[0]} at {order.orderPlacedTime.split('T')[1].split(':')[0]}:{order.orderPlacedTime.split('T')[1].split(':')[0]} .  
                       <Link
                         component="button"
                         variant="body2"
-                        onClick={()=>viewReciptHandler(order.orderId)}
+                        onClick={()=>{
+                          console.log('selected order')
+                          console.log(order)
+                          viewReciptHandler(order._id)}}
                       > View Receipt</Link>
                       <br/>
                       <br/>
@@ -155,7 +162,7 @@ export default function ViewOrders() {
             Total ${selectedOrder.totalPrice}
           </Typography>
           <Typography gutterBottom>
-          {selectedOrder.orderDishes && selectedOrder.orderDishes.map((item)=>{return (
+          {selectedOrder.dishes && selectedOrder.dishes.map((item)=>{return (
             <div>{item.dish.name} ${item.dish.dishPrice}</div>)})}
           </Typography>
         </DialogContent>

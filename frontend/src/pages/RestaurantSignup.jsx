@@ -53,13 +53,15 @@ const RestaurantSignup = () => {
     dispatch(signupRestaurantRequest());
     try {
       const response = await axiosInstance.post('register/restaurants', customerObj);
+      console.log('response after restaurant creation')
       console.log(response);
       dispatch(signupRestaurantSuccess(response));
       sessionStorage.setItem('token', response.data.token);
       hist.push('/login/restaurant');
     } catch (error) {
+      console.log('restauant signup error');
       console.log(error);
-      dispatch(signupRestaurantFailure(error));
+      // dispatch(signupRestaurantFailure(error));
     }
   };
   return (

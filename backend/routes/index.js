@@ -15,9 +15,11 @@ const {
   orderValidationRules,
   customerAddressValidationRules,
 } = require('../controllers/valdiationRules');
+const { auth } = require('../utils/passport');
 
 const router = Router();
 
+auth();
 // Root route
 router.get('/', (req, res) => res.send('This is root!'));
 

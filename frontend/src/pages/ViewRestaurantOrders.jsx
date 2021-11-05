@@ -64,6 +64,9 @@ export default function ViewRestaurantOrders() {
         restId = decoded.id;
     }
 
+    console.log('displayorders')
+    console.log(displayOrders)
+
     useEffect(() => {
       // let orderObj = newOrderStatus
       console.log(newOrderStatus.orderStatus)
@@ -169,12 +172,12 @@ export default function ViewRestaurantOrders() {
                         onClick={()=>viewProfileHandler(order.custId._id)}
                       > View Profile</Link>
               <Typography  component="p" variant="subtitle1">Order Details</Typography>
-              {order.orderDishes.map(dish=> <div>{dish.dish.name}  {dish.dish.dishPrice}</div>)}
+              {/* {order.orderDishes.map(dish=> <div>{dish.dish.name}  {dish.dish.dishPrice}</div>)} */}
               Price: {order.totalPrice} $<br/>
-              Set Order Status: <Button onClick={()=>setNewOrderStatus({ orderStatus:"Preparing", orderId:order.orderId})}>Preparing</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Cancelled", orderId:order.orderId})}>Cancel</Button><br/>
+              Set Order Status: <Button onClick={()=>setNewOrderStatus({ orderStatus:"Preparing", orderId:order._id})}>Preparing</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Cancelled", orderId:order._id})}>Cancel</Button><br/>
               Set Delivery Status: 
               {order.orderType=="Pickup"?
-                <p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order.orderId})}>Pickup Ready</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Pickup up", orderId:order.orderId})}>Customer Pickuped</Button></p>:<p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order.orderId})}>Delivery Ready</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Delivered", orderId:order.orderId})}>Delivered</Button></p>}
+                <p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order._id})}>Pickup Ready</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Pickup up", orderId:order._id})}>Customer Pickuped</Button></p>:<p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order._id})}>Delivery Ready</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Delivered", orderId:order._id})}>Delivered</Button></p>}
             </div>
             )
       })  

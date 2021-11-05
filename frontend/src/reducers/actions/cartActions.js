@@ -8,20 +8,28 @@ export function addDishToCart(payload) {
     return (dispatch)=>{
       axiosInstance.put(`/customers/${payload.custId}/cart/${payload.dishId._id}`, payload)
         .then((data)=>{
-          console.log('success') 
+          console.log('success')
+            dispatch({ type: 'ADD_TO_CART', payload });
         }).catch(error=>console.log(error))
-      dispatch({ type: 'ADD_TO_CART', payload });
     }
   }
   
 export function updateDishQuantity(payload) {
     return (dispatch)=>{
-      console.log('payload display')
-      console.log(payload)
-      axiosInstance.put(`/customers/${payload.custId}/updatecart`, payload)
-      .then((data)=>{
-        console.log(data) 
-      }).catch(error=>console.log(error))
+        console.log('payload display')
+        console.log(payload)
+        // if(payload.quantity<=0){
+        //     axiosInstance.delete(`/customers/${payload.custId}/deleteitem/${payload.dishId._id}`)
+        //         .then((data) => {
+        //             console.log(data)
+        //         }).catch(error => console.log(error))
+        // }
+        // else {
+            axiosInstance.put(`/customers/${payload.custId}/updatecart`, payload)
+                .then((data) => {
+                    console.log(data)
+                }).catch(error => console.log(error))
+        // }
       dispatch({type: 'UPADATE_DISH_QUANTITY', payload })
     }
   }
@@ -54,4 +62,20 @@ export function setCartReduxFromDB(payload) {
     
   }
     // return { type: 'SET_CART_FROM_DB', payload};
+  }
+
+  export function resetAndAddToCart(payload) {
+    return (dispatch)=>{
+      axiosInstance.delete(`/customers/${payload.custId}/deletecart`)
+          .then((res)=>{
+              console.log('in res and add')
+              console.log(res)
+              axiosInstance.put(`/customers/${payload.custId}/cart/${payload.dishId._id}`, payload)
+                .then((res)=>{
+                  console.log(res)
+                  dispatch({ type: 'RESET_AND_ADD_TO_CART', payload });
+            }).catch(error=>console.log(error))
+        }).catch(error=>console.log(error))
+      
+    }
   }

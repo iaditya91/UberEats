@@ -1,69 +1,116 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 const { customer, customerAddress, custFavs, restaurant } = require('../models/data-model');
 var objectId = require('mongodb').ObjectId;
 const {
   generateAccessToken,
 } = require('../middleware/validateToken');
+let {secret} = require('../config/keys')
+var kafka = require('../kafka/client')
 
 const createCustomer = async (req, res) => {
   try {
+    
     // Check if email already exists
-    const checkUser = await customer.findOne(
-      { emailId: req.body.emailId },
-    );
-    console.log(checkUser)
-    if (checkUser) {
-      return res.status(409).json({
-        error:
-          "There's already an account with this email. Please sign in.",
-      });
-    }
-    // Else create new customer
-    req.body.passwd = await bcrypt.hash(req.body.passwd, 12); // crypt the password
-    const cust = await customer.create(req.body);
-    const token = generateAccessToken(cust.custId, 'customer');
-    return res.status(201).json({
-      cust,
-      token,
+      kafka.make_request("signup", req.body, function(err, results){
+        if(err)
+        {
+        console.log('inside err');
+        res.json({
+          status: 'error',
+          msg: 'system error, try again.'
+        });}
+
+        else{
+          console.log('inside router post');
+          console.log(results)
+          res.status(200).send(results);
+        }
     });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-};
+  }catch(error){
+    console.log(error)
+  }};
+  //   const checkUser = await customer.findOne(
+  //     { emailId: req.body.emailId },
+  //   );
+  //   console.log(checkUser)
+  //   if (checkUser) {
+  //     return res.status(409).json({
+  //       error:
+  //         "There's already an account with this email. Please sign in.",
+  //     });
+  //   }
+  //   // Else create new customer
+  //   req.body.passwd = await bcrypt.hash(req.body.passwd, 12); // crypt the password
+  //   const cust = await customer.create(req.body);
+  //   const token = generateAccessToken(cust.custId, 'customer');
+  //   return res.status(201).json({
+  //     cust,
+  //     token,
+  //   });
+  // } catch (error) {
+  //   return res.status(500).json({ error: error.message });
+  // }
+  // };
 
 const loginCustomer = async (req, res) => {
   try {
-    const { emailId, passwd } = req.body;
-    if (!emailId || !passwd) {
-      return res
-        .status(401)
-        .json({ error: 'Please input all fields!' });
-    }
-    const existingCustomer = await customer.findOne({
-      where: { emailId },
-    });
-    if (!existingCustomer) {
-      return res
-        .status(404)
-        .json({ error: 'Email not found! Please register!' });
-    }
-    bcrypt.compare(passwd, existingCustomer.passwd, (err) => {
-      if (err) {
-        return res.status(401).json({ error: 'Invalid password!' });
+    kafka.make_request("login", req.body, function(err, results){
+      if(err)
+      {
+      console.log('inside err');
+      res.json({
+        status: 'error',
+        msg: 'system error, try again.'
+      });}
+
+      else{
+        console.log('inside router post');
+        console.log(results)
+        res.status(200).send(results);
       }
-      const token = generateAccessToken(
-        existingCustomer._id,
-        'customer',
-      );
-      return res
-        .status(200)
-        .json({ message: 'Login successful', token });
-    });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
-  return null;
-};
+  });
+}catch(error){
+  console.log(error)
+}};
+//     const { emailId, passwd } = req.body;
+//     if (!emailId || !passwd) {
+//       return res
+//         .status(401)
+//         .json({ error: 'Please input all fields!' });
+//     }
+//     const existingCustomer = await customer.findOne({
+//       where: { emailId },
+//     });
+//     if (!existingCustomer) {
+//       return res
+//         .status(404)
+//         .json({ error: 'Email not found! Please register!' });
+//     }
+//     bcrypt.compare(passwd, existingCustomer.passwd, (err) => {
+//       if (err) {
+//         return res.status(401).json({ error: 'Invalid password!' });
+//       }
+//       // const token = generateAccessToken(
+//       //   existingCustomer._id,
+//       //   'customer',
+//       // );
+//       const token = jwt.sign({
+//         id:existingCustomer._id,
+//         role:'customer',
+//       },'secret',{
+//         expiresIn: 1008000
+//       });
+//       return res
+//         .status(200)
+//         .json({ message: 'Login successful', token });
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+//   return null;
+// };
 
 const getCustomer = async (req, res) => {
   try {

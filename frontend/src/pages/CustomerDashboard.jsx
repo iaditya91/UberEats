@@ -49,7 +49,7 @@ function CustomerDashboard() {
           custId = decoded.id
       })()
   }
-  console.log(custId)
+  // console.log(custId)
 
   useEffect(() => {
     if(custId){
@@ -58,31 +58,30 @@ function CustomerDashboard() {
     else{
     loadAllRestaurants('nocity')
     }
-  }, [])
+  }, [custId])
 
   useEffect(() => {
     setDisplayRestaurants(filteredrestaurants)
   }, [filteredrestaurants])
 
   useEffect(() => {
-    console.log('im in search useffect '+ searchState)
+    // console.log('im in search useffect '+ searchState)
     console.log(searchState)
-    // console.log(searchState.searchquery)
-    if(searchState){
-    getSearchData(searchState)
+    if(searchState.searchquery || searchState.searchquery != ''){
+    getSearchData(searchState.searchquery)
       .then((res) => {
-          // setDisplayRestaurants()
+          console.log(res.data)
+          setRestaurants(res.data.rest)
           setFilteredRestaurants(res.data.rest)
-          // console.log(res.data.rest)
         })
     .catch((err) => console.log(err));}
-  }, [searchState])
+  }, [searchState.searchquery])
 
   const loadCustomerDetails = (callback) => {
-    console.log('load cust details')
+    // console.log('load custId details')
     getCustomerData(custId)
       .then((res) => {
-        console.log('user city in loadcustdetails '+ res.data.user.city);
+        // console.log('user city in loadcustdetails '+ res.data.user.city);
         setUserCity(res.data.user.city)
         callback(res.data.user.city)
         // console.log(userCity)
@@ -95,7 +94,7 @@ function CustomerDashboard() {
   const loadAllRestaurants = (curcity) => {
     getRestaurantData(curcity)
       .then((res) => {
-        console.log(res.data.restaurants);
+        // console.log(res.data.restaurants);
         setRestaurants(res.data.restaurants);
         setDisplayRestaurants(res.data.restaurants);
       })
@@ -112,7 +111,7 @@ function CustomerDashboard() {
   }
 
   const dietHandler =(diet)=>{
-    console.log(diet)  
+    // console.log(diet)
     let filteredrest = restaurants.filter(rest=>rest.dietary==diet)
     setDisplayRestaurants(filteredrest)
   }
@@ -168,8 +167,8 @@ function CustomerDashboard() {
           <div className="col-md-9">
             <div className="row">
             {displayrestaurants.map((res) => (
-                <div key={res.restId} className="col-md-4">
-                    <Card key={res.restId}  className={classes.card}
+                <div key={res._id} className="col-md-4">
+                    <Card key={res._id}  className={classes.card}
                       title={res.name}>
                         <div >
                       <img  style= {{ width: '280px' , height:'200px'}} onClick={()=>{hist.push(`/restaurantMain/${res._id}`)}} src={res.profileImg}/>

@@ -6,6 +6,10 @@ const initialState = {
     restaurant: '',
     orderNote: '',
   };
+
+const eventExists = (events, event) => {
+    return events.dishes.some((e) => e.dish._id === event);
+}
  
 function cartReducer(state = initialState, action) {
     switch (action.type) {
@@ -32,11 +36,22 @@ function cartReducer(state = initialState, action) {
                 dishes: [],
                 restaurant: {}
             };
+        case 'RESET_AND_ADD_TO_CART':
+                return {
+                    custId: action.payload.custId,
+                    dishes: [{dish: action.payload.dishId, quantity: action.payload.quantity}],
+                    restaurant: action.payload.restaurant,
+                    orderNote: '',
+                    cartId: ''
+                };
         case 'ADD_TO_CART':
-            return {
-                ...state,
-                dishes: [...state.dishes, {dish: action.payload.dishId, quantity: action.payload.quantity}]
-            };
+            if (eventExists(state, action.payload.dishId._id)) {
+                return state;
+            } else{
+                return {
+                    ...state,
+                    dishes: [...state.dishes, {dish: action.payload.dishId, quantity: action.payload.quantity}]}
+                }
         case 'UPADATE_DISH_QUANTITY':
             let alldishes = state.dishes
             if(action.payload.quantity<=0){

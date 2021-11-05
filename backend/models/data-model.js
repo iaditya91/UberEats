@@ -113,7 +113,9 @@ const order = mongoose.model('order', new Schema({
   totalPrice: {type: Number},
   orderPlacedTime: {type: Date},
   orderAddress: {type: String},
-  cartId: {type: Schema.Types.ObjectId ,ref:'cart'},
+  dishes: [{
+    dish: {type: Schema.Types.ObjectId, ref:'dish',unique:true}, 
+    quantity: {type: Number}}],
   orderNote: {type: String}
 },
 {

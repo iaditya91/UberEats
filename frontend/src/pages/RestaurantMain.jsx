@@ -12,7 +12,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import axiosInstance from '../config/axiosConfig';
 import { useSelector, useDispatch } from 'react-redux';
-import {createCart, addDishToCart, addRestaurantDetailsToCart, resetCart, setCartReduxFromDB} from '../reducers/actions/cartActions'
+import {createCart, addDishToCart, addRestaurantDetailsToCart, resetCart, setCartReduxFromDB, resetAndAddToCart} from '../reducers/actions/cartActions'
 import jwt_decode from 'jwt-decode';
 import { useParams } from 'react-router';
 import { setRestaurantDetails } from '../reducers/actions/detActions';
@@ -67,11 +67,9 @@ const RestaurantMain =  ()=>{
     const cardOnClickHandler = async (name)=>{
         
         try {
-            // console.log('on click handler try')
-            // console.log(restaurant)
-            // console.log(cartState.restaurant)
             
             if(JSON.stringify(cartState.restaurant)==='{}'){
+            // if(cartState.restaurant==''){
                 // console.log('entered into 1st if stmt')
                 dispatch(addRestaurantDetailsToCart({restaurant}))
                 dispatch(addDishToCart({dishId: name, quantity:1,custId}))
@@ -84,7 +82,6 @@ const RestaurantMain =  ()=>{
                 setWarningDish(name)
                 setOpenWarning(true)
             }
-            // console.log(cartState)
         } catch (error) {
         console.log(error);}
     }
@@ -128,7 +125,7 @@ const RestaurantMain =  ()=>{
         <div style={{ margin: "20px 20px 20px 20px", display:"grid", gridGap:"20px",gridTemplateRows:"repeat(2,170px)",gridTemplateColumns:"repeat(auto-fill, 420px)"}}>
             {dishes.length > 0  && dishes.map((dish) => {
                     return (
-                            <Card>
+                            <Card key={dish._id}>
                             <Box style={{ display: 'flex' ,flexDirection:'columns', width:"100%", height:"100%"}}>
                             <CardContent style={{display: 'grid' ,gridTemplateRows:'repeat(2,30px)'}}>
                                 <Typography component="div" variant="h5">
@@ -176,10 +173,11 @@ const RestaurantMain =  ()=>{
                 handleWarningClose()
         }} style={{backgroundColor:"black", color:"white"}}>Cancel</Button>
         <Button varient='contained' 
-            onClick={(e)=>{
+            onClick={ (e)=>{
                 e.preventDefault()
-                dispatch(resetCart({custId}))
-                dispatch(addDishToCart({custId,dishId: warningDish, quantity:1}))
+                // dispatch(addDishToCart({custId,dishId: warningDish, quantity:1}))
+                //  dispatch(resetCart({custId}))
+                dispatch(resetAndAddToCart({custId,restaurant, dishId: warningDish, quantity:1}))
                 handleWarningClose()
         }} style={{backgroundColor:"black", color:"white"}}>New Order</Button>
         </DialogActions>

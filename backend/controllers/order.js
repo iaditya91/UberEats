@@ -9,8 +9,7 @@ const initOrder = async (req, res) => {
   try {
     const { custId } = req.params;
     console.log(req.body);
-    const {orderType, price,restId, taxPrice, totalPrice, orderAddress, cartId} = req.body;
-    // const { restId } = cartItems[0];
+    const {orderType, price,restId, taxPrice, totalPrice, orderAddress, dishes, orderNote} = req.body;
     console.log(restId);
     const orderPlacedTime = Date.now();
     const orderEntry = await order.create(
@@ -24,7 +23,8 @@ const initOrder = async (req, res) => {
         orderAddress,
         orderPlacedTime,
         orderStatus: 'Placed',
-        cartId
+        dishes,
+        orderNote
       },
     );
     return res.status(200).json({ orderEntry, message: 'Order Placed Successfully!' });
@@ -55,7 +55,7 @@ const getRestaurantOrders = async (req, res) => {
     // if (String(req.headers.id) !== String(restId)) {
     //   return res.status(401).json({ error: 'Unauthorized request!' });
     // }
-    const restaurantOrders = await order.find({ restId }).populate({path:'restId',model:'restaurant'}).populate({path:'custId',model:'customer'}).populate({path:'cartId',model:'cart',populate:{path:'dishes.dish', model:'dish'}});
+    const restaurantOrders = await order.find({ restId }).populate({path:'restId',model:'restaurant'}).populate({path:'custId',model:'customer'}); //.populate({path:'cartId',model:'cart',populate:{path:'dishes.dish', model:'dish'}});
     console.log(restaurantOrders);
     // const dishdetails = await orderDishes.find({restaurantOrder["_id"]}).populate();
     // include: [{ model: orderDishes, include: [{ model: dish }] }],
@@ -72,11 +72,7 @@ const getCustomerOrders = async (req, res) => {
     // if (String(req.headers.id) !== String(custId)) {
     //   return res.status(401).json({ error: 'Unauthorized request!' });
     // }
-    const customerOrders = await order.findAll({
-      where: { custId },
-      include: [{ model: orderDishes, include: [{ model: dish }] }],
-      order: [['createdAt', 'DESC']],
-    });
+    const customerOrders = await order.find({ custId }).populate({path:'restId',model:'restaurant'}).populate({path:'dishes.dish',model:'dish'});
     return res.json({ customerOrders });
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -99,9 +95,8 @@ const updateOrder = async (req, res) => {
     if (!orderId) {
       return res.status(400).json({ error: 'Order not found!' });
     }
-    const updatedOrder = await order.update(
-      { orderStatus},
-      {where: {orderId}} ,
+    const updatedOrder = await order.updateOne(
+      {orderId},{$set: orderStatus}
     );
     return res
       .status(200)
