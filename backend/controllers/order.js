@@ -4,6 +4,7 @@ const {
   order,
   orderDishes,
 } = require('../models/data-model');
+var object_id = require('mongodb').ObjectId;
 
 const initOrder = async (req, res) => {
   try {
@@ -95,9 +96,11 @@ const updateOrder = async (req, res) => {
     if (!orderId) {
       return res.status(400).json({ error: 'Order not found!' });
     }
+    console.log(orderId, orderStatus)
     const updatedOrder = await order.updateOne(
-      {orderId},{$set: orderStatus}
+      {_id: object_id(orderId)},{$set: {"orderStatus": orderStatus}}
     );
+    console.log(updatedOrder)
     return res
       .status(200)
       .json({ message: 'Order status updated!', updatedOrder });

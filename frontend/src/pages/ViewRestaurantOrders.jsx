@@ -54,6 +54,7 @@ export default function ViewRestaurantOrders() {
     const [displayOrders, setDisplayOrders] = useState([]) 
     const [filteredOrders, setFilteredOrders] = useState([]) 
     const [openProfile, setOpenProfile] = React.useState(false);
+    const [pageRefresh, setPageRefresh] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState({})
     const [newOrderStatus, setNewOrderStatus] = useState({})
 
@@ -73,9 +74,12 @@ export default function ViewRestaurantOrders() {
       console.log(newOrderStatus.orderId)
       axiosInstance.put(`restaurants/${restId}/updateorder/`, newOrderStatus)
         .then((data)=>{
+          console.log(data)
+          // setPageRefresh(true)
           axiosInstance.get(`/restaurants/${restId}/orders`)
             .then((data)=>{
               console.log(data.data.restaurantOrders)
+              // setPageRefresh(ture);
               setOrders(data.data.restaurantOrders)
             }).catch(error=>console.log(error))
         }).catch(error=>console.log(error))
@@ -111,6 +115,16 @@ export default function ViewRestaurantOrders() {
         console.log(error);}
     },[]);
 
+  //   useEffect(async ()=> {
+  //     try {
+  //         const response = await axiosInstance.get(`/restaurants/${restId}/orders`);         
+  //         console.log(response.data)
+  //         setOrders(response.data.restaurantOrders)
+  //         console.log(orders)
+  //     } catch (error) {
+  //     console.log(error);}
+  // },[pageRefresh]);
+
   return (
 
     <div>
@@ -121,7 +135,7 @@ export default function ViewRestaurantOrders() {
           <FormControl component="fieldset">
             <RadioGroup
               aria-label="orders"
-              defaultValue="new"
+              defaultValue="Placed"
               onChange={(e)=>{
                 //console.log(e)
                 console.log(e.target.value)
@@ -174,10 +188,13 @@ export default function ViewRestaurantOrders() {
               <Typography  component="p" variant="subtitle1">Order Details</Typography>
               {/* {order.orderDishes.map(dish=> <div>{dish.dish.name}  {dish.dish.dishPrice}</div>)} */}
               Price: {order.totalPrice} $<br/>
-              Set Order Status: <Button onClick={()=>setNewOrderStatus({ orderStatus:"Preparing", orderId:order._id})}>Preparing</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Cancelled", orderId:order._id})}>Cancel</Button><br/>
+              Set Order Status: <Button onClick={()=>setNewOrderStatus({ orderStatus:"Preparing", orderId:order._id})}>Preparing</Button> 
+              <Button onClick={()=>setNewOrderStatus({ orderStatus:"Cancelled", orderId:order._id})}>Cancel</Button><br/>
               Set Delivery Status: 
               {order.orderType=="Pickup"?
-                <p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order._id})}>Pickup Ready</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Pickup up", orderId:order._id})}>Customer Pickuped</Button></p>:<p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order._id})}>Delivery Ready</Button> <Button onClick={()=>setNewOrderStatus({ orderStatus:"Delivered", orderId:order._id})}>Delivered</Button></p>}
+                <p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order._id})}>Pickup Ready</Button> 
+                <Button onClick={()=>setNewOrderStatus({ orderStatus:"Pickup up", orderId:order._id})}>Customer Pickuped</Button></p>:<p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order._id})}>Delivery Ready</Button> 
+                <Button onClick={()=>setNewOrderStatus({ orderStatus:"Delivered", orderId:order._id})}>Delivered</Button></p>}
             </div>
             )
       })  
