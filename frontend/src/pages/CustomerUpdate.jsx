@@ -80,7 +80,7 @@ function CustomerUpdate() {
           headers: { Authorization: token },
         });
         console.log(response);
-        hist.push('/customer/dashboard');
+        hist.push('/');
       } catch (error) {
         console.log(error);
       }

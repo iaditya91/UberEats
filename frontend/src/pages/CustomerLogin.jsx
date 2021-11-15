@@ -19,6 +19,7 @@ import { useHistory } from 'react-router';
 function LoginCustomer() {
   const [email_id, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const hist = useHistory();
   
   const dispatch = useDispatch();
@@ -28,12 +29,18 @@ function LoginCustomer() {
     const customerObj = { emailId: email_id, passwd: password };
     dispatch(loginCustomerRequest());
     try {
-      const response = await axiosInstance.post('login/customers', customerObj);
-      console.log(response);
-      dispatch(loginCustomerSuccess(response));
-      sessionStorage.setItem('token', response.data.token);
-      hist.push('/');
+        const response = await axiosInstance.post('login/customers', customerObj);
+        if(response.data.token){
+        console.log(response);
+        dispatch(loginCustomerSuccess(response));
+        sessionStorage.setItem('token', response.data.token);
+        hist.push('/');
+      }
+      else{
+          setErrorMsg('Please enter valid credientails!')
+      }
     } catch (error) {
+      setErrorMsg('Please enter valid credientails!')
       console.log(error);
       dispatch(loginCustomerFailure(error));
     }
@@ -73,6 +80,7 @@ function LoginCustomer() {
               autoFocus
             />
           </FormControl>
+          {errorMsg && <p style={{color:'red',align: 'center'}}>{errorMsg}</p>}
           <Button type="submit" style={{ width: '50%' }}>
             Submit
           </Button>

@@ -62,7 +62,7 @@ export default function CustomerFavourtes() {
 
                             <CardContent style={{display: 'grid' ,gridTemplateRows:'repeat(2,30px)'}} >
                                 <Typography style={{justifyContent:'center'}} component="div" variant="h5">
-                                   {/* {rest.restId.name} */}
+                                   {rest.restId.name}
                                 </Typography>
                                 <Typography style={{justifyContent:'center'}} variant="subtitle1" color="text.secondary" component="div">
                                    {rest.restId.description}

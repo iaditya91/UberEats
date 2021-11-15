@@ -5,34 +5,65 @@ const {
   orderDishes,
 } = require('../models/data-model');
 var object_id = require('mongodb').ObjectId;
+let {secret} = require('../config/keys')
+var kafka = require('../kafka/client')
 
 const initOrder = async (req, res) => {
-  try {
-    const { custId } = req.params;
-    console.log(req.body);
-    const {orderType, price,restId, taxPrice, totalPrice, orderAddress, dishes, orderNote} = req.body;
-    console.log(restId);
-    const orderPlacedTime = Date.now();
-    const orderEntry = await order.create(
-      {
-        price,
-        taxPrice,
-        totalPrice,
-        custId,
-        restId,
-        orderType,
-        orderAddress,
-        orderPlacedTime,
-        orderStatus: 'Placed',
-        dishes,
-        orderNote
-      },
-    );
-    return res.status(200).json({ orderEntry, message: 'Order Placed Successfully!' });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+  try{
+    const {custId} = req.params
+      const orderPlacedTime = Date.now();
+      msg_payload_total = Object.assign(
+        req.body,
+        { custId },
+        { orderPlacedTime },
+        { orderStatus: 'Placed' }
+      );
+      console.log("msg_payload_total");
+      console.log(msg_payload_total);
+
+      kafka.make_request("initOrder", msg_payload_total, function (err, results) {
+        if (err) {
+          console.log("inside err");
+          res.json({
+            status: "error",
+            msg: "system error, try again.",
+          });
+        } else {
+          console.log("inside router post");
+          console.log(results);
+          res.status(200).send(results);
+        }
+      });
+} catch (error) {
+  return res.status(500).json({ error: error.message });
+}
 };
+//   try {
+//     const { custId } = req.params;
+//     console.log(req.body);
+//     const {orderType, price,restId, taxPrice, totalPrice, orderAddress, dishes, orderNote} = req.body;
+//     console.log(restId);
+//     const orderPlacedTime = Date.now();
+//     const orderEntry = await order.create(
+//       {
+//         price,
+//         taxPrice,
+//         totalPrice,
+//         custId,
+//         restId,
+//         orderType,
+//         orderAddress,
+//         orderPlacedTime,
+//         orderStatus: 'Placed',
+//         dishes,
+//         orderNote
+//       },
+//     );
+//     return res.status(200).json({ orderEntry, message: 'Order Placed Successfully!' });
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+// };
 
 const getLatestOrder = async (req, res) => {
   try {

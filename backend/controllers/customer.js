@@ -11,7 +11,6 @@ var kafka = require('../kafka/client')
 
 const createCustomer = async (req, res) => {
   try {
-    
     // Check if email already exists
       kafka.make_request("signup", req.body, function(err, results){
         if(err)
@@ -31,6 +30,7 @@ const createCustomer = async (req, res) => {
   }catch(error){
     console.log(error)
   }};
+  // try{
   //   const checkUser = await customer.findOne(
   //     { emailId: req.body.emailId },
   //   );
@@ -74,6 +74,7 @@ const loginCustomer = async (req, res) => {
 }catch(error){
   console.log(error)
 }};
+// try{
 //     const { emailId, passwd } = req.body;
 //     if (!emailId || !passwd) {
 //       return res
@@ -118,9 +119,9 @@ const getCustomer = async (req, res) => {
     // if (String(req.headers.id) !== String(custId)) {
     //   return res.status(401).json({ error: 'Unauthorized request!' });
     // }
-    const user = await customer.findOne({
-      where: { _id:custId },
-    });
+    const user = await customer.findOne(
+     { _id:custId }
+    );
     if (!user) {
       return res.status(404).json({
         error: 'Customer with the specified ID does not exist!',
@@ -134,28 +135,51 @@ const getCustomer = async (req, res) => {
 
 const updateCustomer = async (req, res) => {
   try {
-    const { custId } = req.params;
-    // if (String(req.headers.id) !== String(custId)) {
-    //   return res.status(401).json({ error: 'Unauthorized request!' });
-    // }
-    req.body.passwd = await bcrypt.hash(req.body.passwd, 12);
-    const updated = await customer.updateOne(
-       { _id:custId },{$set:req.body}
-    );
-    console.log(custId)
-    console.log(updated)
-    
-    if (updated) {
-      const updatedUser = await customer.findOne(
-         { _id:custId }
-      );
-      return res.status(200).json({ user: updatedUser });
-    }
-    return res.status(404).json({ error: 'User not found!' });
-  } catch (error) {
+    // Check if email already exists
+    // const { custId } = req.params;
+    //   paramters = [req.body, custId]
+    msg_payload_total = Object.assign(req.body, req.params);
+      kafka.make_request("update_customer", msg_payload_total, function(err, results){
+        if(err)
+        {
+        console.log('inside err');
+        res.json({
+          status: 'error',
+          msg: 'system error, try again.'
+        });}
+
+        else{
+          console.log('inside router post');
+          console.log(results)
+          res.status(200).send(results);
+        }
+    });
+  }catch(error){
     return res.status(500).json({ error: error.message });
-  }
-};
+  }};
+//   try {
+//     const { custId } = req.params;
+//     // if (String(req.headers.id) !== String(custId)) {
+//     //   return res.status(401).json({ error: 'Unauthorized request!' });
+//     // }
+//     req.body.passwd = await bcrypt.hash(req.body.passwd, 12);
+//     const updated = await customer.updateOne(
+//        { _id:custId },{$set:req.body}
+//     );
+//     console.log(custId)
+//     console.log(updated)
+    
+//     if (updated) {
+//       const updatedUser = await customer.findOne(
+//          { _id:custId }
+//       );
+//       return res.status(200).json({ user: updatedUser });
+//     }
+//     return res.status(404).json({ error: 'User not found!' });
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+// };
 
 const addCustomerAddress = async (req, res) => {
   try {
@@ -196,9 +220,9 @@ const addCustomerAddress = async (req, res) => {
 const deleteCustomer = async (req, res) => {
   try {
     const { custId } = req.params;
-    const deleted = await customer.destroy({
-      where: { custId },
-    });
+    const deleted = await customer.destroy(
+       { custId }
+    );
     if (deleted) {
       return res
         .status(200)

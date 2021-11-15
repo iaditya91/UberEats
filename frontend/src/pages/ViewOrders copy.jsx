@@ -41,7 +41,6 @@ export default function ViewOrders() {
     const [restaurantNames, setRestaurantNames] = useState({})
     const [openReceipt, setOpenReceipt] = React.useState(false);
     const [selectedOrder, setSelectedOrder] = useState({})
-    const [selectedStatus, setSelectedStatus] = useState()
 
     // totalPages: 1,
     // currentPage: 1,
@@ -83,9 +82,9 @@ export default function ViewOrders() {
               restNames[order.restId] = restDetails.data.rest.name
             })
             setRestaurantNames(restNames)
-            // let totalResultsAvailable = totalResults
-            // let totalPgs = Math.ceil(totalResultsAvailable/response.data.customerOrders.length)
-            // setTotalPages(totalPgs)
+            let totalResultsAvailable = totalResults
+            let totalPgs = Math.ceil(totalResultsAvailable/response.data.customerOrders.length)
+            setTotalPages(totalPgs)
         } catch (error) {
         console.log(error);}
     }
@@ -119,22 +118,7 @@ export default function ViewOrders() {
       setTotalResults(totalResultsToShow)
       setCurrentPage(1)
       // getOrders()
-      let totalResultsAvailable = totalResultsToShow
-      console.log('totResAvail', totalResultsAvailable)
-      console.log('order length', displayOrders.length)
-            let totalPgs = Math.ceil(displayOrders.length/totalResultsAvailable)
-            console.log('totalPgs',totalPgs)
-            setTotalPages(totalPgs)
     }
-
-    const [, updateState] = React.useState();
-    const forceUpdate = React.useCallback(() => updateState({}), []);
-    const [ dummystate, setDummyState] = useState()
-
-    useEffect(() => {
-      console.log('dummy state called!')
-      getOrders()
-    }, [dummystate])
 
     const cancelOrderHandler = (orderId) => {
       console.log('cancel order clicked!')
@@ -143,88 +127,9 @@ export default function ViewOrders() {
       console.log(curorder[0].restId._id)
       axiosInstance.put(`restaurants/${curorder[0].restId._id}/updateorder/`, { orderStatus:"Cancelled", orderId:curorder[0]._id})
       .then((data)=>{
-        // forceUpdate();
-        // setDummyState(!dummystate)
-        // setSelectedOrder(orderId)
-        window.location.reload(false);
         console.log('orderStatus Changed')
       }).catch(error=>console.log(error))
-      // setDummyState(!dummystate)
     };
-
-   
-    const displayOrdersOnPage = ()=>{
-      const orderCards = [];
-      console.log('indside display order cards')
-
-      if (displayOrders.length > 0) {
-        const lowerLimit = (currentPage - 1) * totalResults;
-        const higherLimit = (currentPage * totalResults);
-        const totalImages = higherLimit < displayOrders.length ? higherLimit : displayOrders.length;
-        for (let i = lowerLimit; i < totalImages; i++) {
-          const order = displayOrders[i];
-          orderCards.push(
-            <div style={{ border: "none", borderBottom: "1px dotted black" }}>{order.restId.name}<br/>
-                {order.dishes.length} items for ${order.totalPrice} . {order.orderPlacedTime.split('T')[0]} at {order.orderPlacedTime.split('T')[1].split(':')[0]}:{order.orderPlacedTime.split('T')[1].split(':')[0]} .  
-                <Link
-                  component="button"
-                  variant="body2"
-                  onClick={()=>{
-                    console.log('selected order')
-                    console.log(order)
-                    viewReciptHandler(order._id)}}
-                > View Receipt</Link>
-                <p>Order Status: {order.orderStatus}</p>
-                {order.orderStatus=="Placed" && <Button style={{borderRadius: 35,
-                                                                backgroundColor: "#b62121",
-                                                                padding: "9px 18px",
-                                                                fontSize: "13px"
-                                                            }}
-                                                            variant="contained" onClick={()=>{cancelOrderHandler(order._id)}}>Cancel Order</Button>}
-                <br/>
-                <br/>
-                
-      </div>
-          );
-        }
-      }
-      
-      console.log(orderCards)
-      
-
-      return orderCards;
-    }
-
-    const displayOrdersOnPagehtml= displayOrdersOnPage()
-    
-    const dissplay = () => {
-      console.log('indside display')
-      return (<h1>Finding Error</h1>)
-    }
-    const dissplayhtml = dissplay()
-
-    const statusChangeHandler = (e)=>{
-      if(e.target.value=="Placed"){
-        let curorders = orders.filter(order=> { return order.orderStatus=="Placed"})
-        console.log(curorders)
-        setFilteredOrders(curorders)
-      }
-      else if(e.target.value=="Preparing"){
-        let curorders = orders.filter(order=> order.orderStatus=="Preparing")
-        console.log(curorders)
-        setFilteredOrders(curorders)
-      }
-      else if(e.target.value=="Delivered"){
-        let curorders = orders.filter(order=>  order.orderStatus=="Delivered" || order.orderStatus=="Pickup up")
-        console.log(curorders)
-        setFilteredOrders(curorders)
-      }
-      else if(e.target.value=="Cancelled"){
-        let curorders = orders.filter(order=>order.orderStatus=="Cancelled")
-        console.log(curorders)
-        setFilteredOrders(curorders)
-      }
-    }
 
   return (
 
@@ -238,17 +143,30 @@ export default function ViewOrders() {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
+              // value="Preparing"
               label="Orders"
-              value={selectedStatus}
-              onSelect={(e)=>{
-                  console.log('on select event')
-                  statusChangeHandler(e)
-                }
-              }
               onChange={(e)=>{
                 console.log(e.target.value)
-                setSelectedStatus(e.target.value)
-                statusChangeHandler(e)
+                if(e.target.value=="Placed"){
+                  let curorders = orders.filter(order=> { return order.orderStatus=="Placed"})
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+                else if(e.target.value=="Preparing"){
+                  let curorders = orders.filter(order=> order.orderStatus=="Preparing")
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+                else if(e.target.value=="Delivered"){
+                  let curorders = orders.filter(order=>  order.orderStatus=="Delivered" || order.orderStatus=="Pickup up")
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
+                else if(e.target.value=="Cancelled"){
+                  let curorders = orders.filter(order=>order.orderStatus=="Cancelled")
+                  console.log(curorders)
+                  setFilteredOrders(curorders)
+                }
               }}
             >
               <MenuItem value="Preparing">Preparing</MenuItem>
@@ -259,8 +177,28 @@ export default function ViewOrders() {
           </FormControl>
 
       <div className={classes.Orders}>
-            {displayOrdersOnPagehtml}
-            {/* {dissplayhtml} */}
+            {displayOrders.length>0 && displayOrders.map(order=>  { 
+              return <div style={{ border: "none", borderBottom: "1px dotted black" }}>{order.restId.name}<br/>
+                      {order.dishes.length} items for ${order.totalPrice} . {order.orderPlacedTime.split('T')[0]} at {order.orderPlacedTime.split('T')[1].split(':')[0]}:{order.orderPlacedTime.split('T')[1].split(':')[0]} .  
+                      <Link
+                        component="button"
+                        variant="body2"
+                        onClick={()=>{
+                          console.log('selected order')
+                          console.log(order)
+                          viewReciptHandler(order._id)}}
+                      > View Receipt</Link>
+                      <p>Order Status: {order.orderStatus}</p>
+                      {order.orderStatus=="Placed" && <Button style={{borderRadius: 35,
+                                                                      backgroundColor: "#b62121",
+                                                                      padding: "9px 18px",
+                                                                      fontSize: "13px"
+                                                                  }}
+                                                                  variant="contained" onClick={()=>{cancelOrderHandler(order._id)}}>Cancel Order</Button>}
+                      <br/>
+                      <br/>
+                      
+            </div>} )}
             <Pagination
                           totalPages={totalPages}
                           currentPage={currentPage}

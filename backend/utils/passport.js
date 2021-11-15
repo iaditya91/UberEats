@@ -2,7 +2,7 @@ var JWTStrategy = require("passport-jwt").Strategy;
 var ExtractJWT = require("passport-jwt").ExtractJwt;
 const passport = require("passport");
 var { secret } = require("../config/keys");
-const {customer }= require("../models/data-model");
+const { customer }= require("../models/data-model");
 
 function auth(){
     var options = {

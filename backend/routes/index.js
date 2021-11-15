@@ -101,6 +101,7 @@ router.get('/customers/:custId/cart', cartController.viewCart);
 router.put('/customers/:custId/cart/:dishId', cartController.addItemToCart);
 router.put('/customers/:custId/updatecart', cartController.updateItemQuantity);
 router.delete('/customers/:custId/deletecart', cartController.deleteCart);
+router.post('/customers/:custId/deleteitem/:dishId', cartController.deleteItemFromCart);
 
 // Order routes
 router.post(

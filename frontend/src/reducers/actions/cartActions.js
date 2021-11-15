@@ -27,7 +27,7 @@ export function updateDishQuantity(payload) {
         // else {
             axiosInstance.put(`/customers/${payload.custId}/updatecart`, payload)
                 .then((data) => {
-                    console.log(data)
+                    console.log(data.msg)
                 }).catch(error => console.log(error))
         // }
       dispatch({type: 'UPADATE_DISH_QUANTITY', payload })

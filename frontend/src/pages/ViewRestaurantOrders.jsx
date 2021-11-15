@@ -21,6 +21,18 @@ import CloseIcon from '@material-ui/icons/Close';
 
 
 const useStyles = makeStyles((theme)=>({
+  bluebutton:{
+      borderRadius: 35,
+      backgroundColor: "#2c3bc5",
+      padding: "9px 18px",
+      fontSize: "13px"
+  },
+  redbutton: {
+    borderRadius: 35,
+    backgroundColor: "#b62121",
+    padding: "9px 18px",
+    fontSize: "13px"
+  },
   container:{
     margin: "30px 30px",
     border: "10px",
@@ -179,7 +191,7 @@ export default function ViewRestaurantOrders() {
           {displayOrders.map(order=>{
             return (
             <div style={{width:`100%`, backgroundColor:`white`, border: "none", borderBottom: "1px dotted black"}}>
-              Order recieved from customer {order.custId.name}<br/>
+              {order.custId && <div>Order recieved from customer {order.custId.name}<br/></div>}
               <Link
                         component="button"
                         variant="body2"
@@ -188,13 +200,13 @@ export default function ViewRestaurantOrders() {
               <Typography  component="p" variant="subtitle1">Order Details</Typography>
               {/* {order.orderDishes.map(dish=> <div>{dish.dish.name}  {dish.dish.dishPrice}</div>)} */}
               Price: {order.totalPrice} $<br/>
-              Set Order Status: <Button onClick={()=>setNewOrderStatus({ orderStatus:"Preparing", orderId:order._id})}>Preparing</Button> 
-              <Button onClick={()=>setNewOrderStatus({ orderStatus:"Cancelled", orderId:order._id})}>Cancel</Button><br/>
+              Set Order Status: <Button className={classes.bluebutton} variant="contained" onClick={()=>setNewOrderStatus({ orderStatus:"Preparing", orderId:order._id})}>Preparing</Button> 
+              <Button className={classes.redbutton} variant="contained" onClick={()=>setNewOrderStatus({ orderStatus:"Cancelled", orderId:order._id})}>Cancel</Button><br/>
               Set Delivery Status: 
               {order.orderType=="Pickup"?
-                <p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order._id})}>Pickup Ready</Button> 
-                <Button onClick={()=>setNewOrderStatus({ orderStatus:"Pickup up", orderId:order._id})}>Customer Pickuped</Button></p>:<p><Button onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order._id})}>Delivery Ready</Button> 
-                <Button onClick={()=>setNewOrderStatus({ orderStatus:"Delivered", orderId:order._id})}>Delivered</Button></p>}
+                <p><Button className={classes.bluebutton} variant="contained" onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order._id})}>Pickup Ready</Button> 
+                <Button className={classes.bluebutton} variant="contained" onClick={()=>setNewOrderStatus({ orderStatus:"Pickup up", orderId:order._id})}>Customer Pickuped</Button></p>:<p><Button className={classes.bluebutton} variant="contained" onClick={()=>setNewOrderStatus({ orderStatus:"Ready", orderId:order._id})}>Delivery Ready</Button> 
+                <Button className={classes.bluebutton} variant="contained" onClick={()=>setNewOrderStatus({ orderStatus:"Delivered", orderId:order._id})}>Delivered</Button></p>}
             </div>
             )
       })  

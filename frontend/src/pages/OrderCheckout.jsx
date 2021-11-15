@@ -129,7 +129,7 @@ export default function OrderCheckout(){
     var totalSum = 0
     if(cartState.dishes.length>0){
         cartState.dishes.map(dish=>{
-            totalSum = totalSum +dish.dish.dishPrice
+            totalSum = totalSum + (dish.dish.dishPrice * dish.quantity)
         })
     }
     totalSum = Math.round(totalSum*100)/100

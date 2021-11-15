@@ -41,7 +41,6 @@ mongoose.connect(mongoDB, options, (err,res) =>{
 
 var connection = new require("./kafka/Connection");
 
-// var getProfile = require("./services/getProfile");
 // var updateProfile = require("./services/updateProfile");
 
 // var getInvitesMygroup = require("./services/MyGroup/getInvitesMygroup");
@@ -71,8 +70,11 @@ var connection = new require("./kafka/Connection");
 // var groupNames = require("./services/RecentActivity/groupNames");
 // var activity = require("./services/RecentActivity/recentActivity");
 
+var initOrder = require("./services/CreateOrder/initOrder");
+var update = require('./services/user/updateProfile')
 var login = require("./services/user/login");
 var signup = require("./services/user/signup");
+// const { updateCustomer } = require("../backend/controllers/customer");
 
 function handleTopicRequest(topic_name, fname) {
   //var topic_name = 'root_topic';
@@ -139,6 +141,8 @@ function handleTopicRequest(topic_name, fname) {
 
 handleTopicRequest("login", login);
 handleTopicRequest("signup", signup);
+handleTopicRequest("update_customer", update);
+handleTopicRequest("initOrder", initOrder);
 
 // app.listen(3002, () => {
 //     console.log("running on the port 3002");

@@ -17,13 +17,17 @@ function handle_request(msg, callback) {
       } else {
         if (result && result.length!=0) {
           console.log('this is result')
+          console.log(result)
           // console.log(result[0].passwd, msg.passwd)
-          // if (bcrypt.compareSync(msg.passwd, result[0].passwd)) {
-          if(msg.passwd === result[0].passwd){
+          console.log('password check:')
+          console.log(bcrypt.compareSync(msg.passwd, result[0].passwd))
+          if (bcrypt.compareSync(msg.passwd, result[0].passwd)) {
+          // if(msg.passwd === result[0].passwd){
             const payload = {
               id: result[0]._id,
               role: 'customer'
             };
+            console.log(result[0]._id)
             const token = jwt.sign(payload, secret);
             // res.status(200).end("JWT " + token);
             callback(null, {cust: result[0]._id, token});

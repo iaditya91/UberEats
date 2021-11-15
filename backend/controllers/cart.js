@@ -73,6 +73,31 @@ const addItemToCart = async (req, res) => {
   }
 }
 
+const deleteItemFromCart = async (req, res) => {
+  try {
+    const { custId } = req.params;
+    // console.log(req.body)
+    // console.log(custId)
+    const existingCart = await cart.findOne({custId});
+    if(!existingCart){
+      return res.status(500).json({msg:'no cart found!'});
+    }
+    else if(req.body.quantity<=0){
+      // console.log()
+      const resp = cart.updateOne(
+          { custId},
+          { $pull: { "dishes": { "dish": req.body.dishId._id } } }
+      );
+      return res.status(200).json({resp, msg:'item quantity updated successfully!'});
+    }
+    await cart.updateOne({custId,"dishes.dish":req.body.dishId._id},{$set:{"dishes.$.quantity": req.body.quantity}});
+    return res.status(200).json({msg:'item deleted successfully!'});
+  }
+  catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
 const updateItemQuantity = async (req, res) => {
   try {
     const { custId } = req.params;
@@ -83,6 +108,7 @@ const updateItemQuantity = async (req, res) => {
       return res.status(500).json({msg:'no cart found!'});
     }
     else if(req.body.quantity<=0){
+      // console.log()
       const resp = cart.updateOne(
           { custId},
           { $pull: { "dishes": { "dish": req.body.dishId._id } } }
@@ -90,7 +116,7 @@ const updateItemQuantity = async (req, res) => {
       return res.status(200).json({resp, msg:'item quantity updated successfully!'});
     }
     await cart.updateOne({custId,"dishes.dish":req.body.dishId._id},{$set:{"dishes.$.quantity": req.body.quantity}});
-    return res.status(200).json({msg:'item quantity updated successfully!'});
+    return res.status(200).json({msg:'item deleted successfully!'});
   }
   catch (error) {
     return res.status(500).json({ error: error.message });
@@ -102,5 +128,6 @@ module.exports = {
   viewCart,
   deleteCart,
   addItemToCart,
-  updateItemQuantity
+  updateItemQuantity,
+  deleteItemFromCart,
 };

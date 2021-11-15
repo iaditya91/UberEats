@@ -46,10 +46,9 @@ function CustomerDashboard() {
   if(token){
       (async() =>{
           var decoded = await jwt_decode(token);
-          custId = decoded.id
+          custId = decoded.id;
       })()
   }
-  // console.log(custId)
 
   useEffect(() => {
     if(custId){

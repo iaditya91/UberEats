@@ -31,7 +31,7 @@ const customer = mongoose.model('customer', new Schema({
 
 const customerAddress = mongoose.model('customerAddress', new Schema({
   custId: {type: Schema.Types.ObjectId ,ref:'customer'},
-  address: {type: String,unique: true}
+  address: {type: String}
 },
 {
   versionKey: false
@@ -135,27 +135,13 @@ const cart = mongoose.model('cart', new Schema({
 }
 ))
 
-// const orderDishes = mongoose.model('orderDishes', new Schema({
-//   custId: {type: Schema.Types.ObjectId ,ref:'customer'},
-//   restId: {type: Schema.Types.ObjectId ,ref:'restaurant'},
-//   dish: {type: Schema.Types.ObjectId, ref:'dish'},
-//   quantity: {type: Number}
-// },
-// {
-//   versionKey: false
-// }
-// ))
-
 module.exports = {
   mongoosedb,
   customer,
   customerAddress,
   restaurant,
   custFavs,
-  // restaurantType,
   dish,
-  // dishImages,
   order,
-  // orderDishes,
   cart,
 };
